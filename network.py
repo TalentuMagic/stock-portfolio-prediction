@@ -4,7 +4,6 @@ import numpy as np
 import seaborn
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, LSTM, Dropout
 from tensorflow.keras.optimizers import Adam
@@ -73,10 +72,10 @@ while True:
 for file in files:
     # Load the dataset
     df = pd.read_csv(f'./{file}', index_col='Date')
-    df = df.drop(['Volume', 'Close'], axis=1)
+    df = df.drop(['Volume'], axis=1)
 
     X = df.iloc[:, :-1].astype('float32')
-    # transpose it due to each row is a different sequence -> each column has 12 features
+    # each row is a different sequence -> each column has 12 features
     X = np.array(X).reshape(X.shape[0], 1, X.shape[1])
     y = df.iloc[:, -1]
 
