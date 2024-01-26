@@ -4,7 +4,6 @@ import numpy as np
 import seaborn
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, LSTM, Dropout
 from tensorflow.keras.optimizers import Adam
@@ -76,7 +75,7 @@ for file in files:
     df = df.drop(['Volume', 'Close'], axis=1)
 
     X = df.iloc[:, :-1].astype('float32')
-    # transpose it due to each row is a different sequence -> each column has 12 features
+    # each row is a different sequence -> each column has 12 features
     X = np.array(X).reshape(X.shape[0], 1, X.shape[1])
     y = df.iloc[:, -1]
 
@@ -93,7 +92,7 @@ for file in files:
     # print("y_test shape:", y_test.shape)
 
     # Define the checkpoint callback
-    checkpoint_path = 'best_model.h5'
+    checkpoint_path = f'./models/{file[:-4]}.h5'
     checkpoint = ModelCheckpoint(
         checkpoint_path,
         monitor='val_accuracy',  # You can use other metrics like 'val_loss'
@@ -106,7 +105,7 @@ for file in files:
 
     # Define the model
     model = Sequential()
-    model.add(LSTM(512, input_shape=(1, 13), return_sequences=True))
+    model.add(LSTM(512, input_shape=(1, X.shape[2]), return_sequences=True))
     model.add(Dropout(0.15))
     model.add(LSTM(256, return_sequences=True))
     model.add(Dropout(0.15))
