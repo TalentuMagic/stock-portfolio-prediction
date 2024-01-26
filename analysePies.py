@@ -16,9 +16,9 @@ def dataSetup(pieData: list = None):
             2 * stock_data['Close'].rolling(window=20).std()
         stock_data['LowerBand'] = stock_data['SMA_20'] - \
             2 * stock_data['Close'].rolling(window=20).std()
-        stock_data['Target'] = stock_data['Adj Close'] - stock_data['Open']
-        stock_data['TargetClass'] = (stock_data['Target'] > 0).astype(int)
         stock_data['Tomorrow'] = stock_data['Adj Close'].shift(-1)
+        stock_data['TargetClass'] = (
+            stock_data['Tomorrow'] > stock_data['Adj Close']).astype(int)
 
         pieData[index] = pieData[index].dropna()
 

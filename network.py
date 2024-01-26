@@ -72,7 +72,7 @@ while True:
 for file in files:
     # Load the dataset
     df = pd.read_csv(f'./{file}', index_col='Date')
-    df = df.drop(['Volume'], axis=1)
+    df = df.drop(['Volume', 'Close'], axis=1)
 
     X = df.iloc[:, :-1].astype('float32')
     # each row is a different sequence -> each column has 12 features
@@ -105,7 +105,7 @@ for file in files:
 
     # Define the model
     model = Sequential()
-    model.add(LSTM(512, input_shape=(1, 13), return_sequences=True))
+    model.add(LSTM(512, input_shape=(1, X.shape[2]), return_sequences=True))
     model.add(Dropout(0.15))
     model.add(LSTM(256, return_sequences=True))
     model.add(Dropout(0.15))
