@@ -94,7 +94,7 @@ for file in files:
 
     # Define the checkpoint callback
     filename = file[2:-4].split(".")
-    if len(filename > 1):
+    if len(filename) > 1:
         checkpoint_path = f'./models/{filename[0]}_{filename[1]}.h5'
     else:
         checkpoint_path = f'./models/{filename[0]}.h5'
@@ -141,8 +141,8 @@ for file in files:
     # Convert probabilities to binary predictions (0 or 1)
     y_val_predictions_binary = (y_val_predictions > 0.3).astype(int).squeeze()
 
-    print(y_val_predictions_binary[:3])
-    print(y_val_predictions[:3])
+    # print(y_val_predictions_binary[:3])
+    # print(y_val_predictions[:3])
 
     # Create confusion matrix
     cm = confusion_matrix(y_val, y_val_predictions_binary)
@@ -168,3 +168,16 @@ for file in files:
     plt.ylabel('Frequency')
     plt.title('Histogram of Predicted Probabilities on Validation Set')
     plt.show()
+
+    # Flatten the probabilities
+    flat_probabilities = y_val_predictions.flatten()
+
+    # Plot the distribution of predicted probabilities
+    plt.figure(figsize=(10, 6))
+    seaborn.histplot(flat_probabilities, bins=30, kde=True,
+                     color='blue', stat='density')
+    plt.title('Distribution of Predicted Probabilities on Validation Set')
+    plt.xlabel('Predicted Probabilities')
+    plt.ylabel('Density')
+    plt.show()
+    break
