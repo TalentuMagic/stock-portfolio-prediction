@@ -92,7 +92,7 @@ for file in files:
     # print("y_test shape:", y_test.shape)
 
     # Define the checkpoint callback
-    checkpoint_path = 'best_model.h5'
+    checkpoint_path = f'./models/{file[:-4]}.h5'
     checkpoint = ModelCheckpoint(
         checkpoint_path,
         monitor='val_accuracy',  # You can use other metrics like 'val_loss'
