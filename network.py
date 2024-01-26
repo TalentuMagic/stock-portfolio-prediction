@@ -109,6 +109,8 @@ for file in files:
     model.add(Dropout(0.15))
     model.add(LSTM(256, return_sequences=True))
     model.add(Dropout(0.15))
+    model.add(LSTM(128, return_sequences=True))
+    model.add(Dropout(0.1))
     model.add(Dense(1, activation='sigmoid'))
     optimizer = Adam(learning_rate=0.0001)
     model.compile(optimizer=optimizer,
