@@ -7,15 +7,17 @@ import matplotlib.pyplot as plt
 def dataSetup(pieData: list = None):
     for index, stock_data in enumerate(pieData):
         stock_data['RSI'] = computeRSI(stock_data=stock_data)
-        stock_data['SMA_50'] = stock_data['Close'].rolling(window=50).mean()
-        stock_data['EMA_50'] = stock_data['Close'].ewm(
+        stock_data['SMA_50'] = stock_data['Adj Close'].rolling(
+            window=50).mean()
+        stock_data['EMA_50'] = stock_data['Adj Close'].ewm(
             span=50, adjust=False).mean()
 
-        stock_data['SMA_20'] = stock_data['Close'].rolling(window=20).mean()
+        stock_data['SMA_20'] = stock_data['Adj Close'].rolling(
+            window=20).mean()
         stock_data['UpperBand'] = stock_data['SMA_20'] + \
-            2 * stock_data['Close'].rolling(window=20).std()
+            2 * stock_data['Adj Close'].rolling(window=20).std()
         stock_data['LowerBand'] = stock_data['SMA_20'] - \
-            2 * stock_data['Close'].rolling(window=20).std()
+            2 * stock_data['Adj Close'].rolling(window=20).std()
         stock_data['Tomorrow'] = stock_data['Adj Close'].shift(-1)
         stock_data['TargetClass'] = (
             stock_data['Tomorrow'] > stock_data['Adj Close']).astype(int)
@@ -26,7 +28,7 @@ def dataSetup(pieData: list = None):
 
 
 def computeRSI(stock_data):
-    change = stock_data["Close"].diff()
+    change = stock_data["Adj Close"].diff()
     # Create two copies of the Closing price Series
     change_up = change.copy()
     change_down = change.copy()
