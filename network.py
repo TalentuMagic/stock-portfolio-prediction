@@ -70,6 +70,7 @@ while True:
             continue
 
 for file in files:
+    print(file)
     # Load the dataset
     df = pd.read_csv(f'./{file}', index_col='Date')
     df = df.drop(['Volume', 'Close'], axis=1)
@@ -92,7 +93,12 @@ for file in files:
     # print("y_test shape:", y_test.shape)
 
     # Define the checkpoint callback
-    checkpoint_path = f'./models/{file[:-4]}.h5'
+    filename = file[2:-4].split(".")
+    if len(filename > 1):
+        checkpoint_path = f'./models/{filename[0]}_{filename[1]}.h5'
+    else:
+        checkpoint_path = f'./models/{filename[0]}.h5'
+
     checkpoint = ModelCheckpoint(
         checkpoint_path,
         monitor='val_accuracy',  # You can use other metrics like 'val_loss'
@@ -162,5 +168,3 @@ for file in files:
     plt.ylabel('Frequency')
     plt.title('Histogram of Predicted Probabilities on Validation Set')
     plt.show()
-
-    break
