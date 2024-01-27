@@ -202,12 +202,12 @@ def main():
         model = Sequential()
         # Input layer
         model.add(LSTM(512, input_shape=(
-            1, X.shape[2]), return_sequences=True, recurrent_dropout=0.15))
+            1, X.shape[2]), return_sequences=True))
         model.add(BatchNormalization())
         model.add(Dropout(0.15))
 
         # 2nd layer
-        model.add(LSTM(256, return_sequences=True, recurrent_dropout=0.15))
+        model.add(LSTM(256, return_sequences=True))
         model.add(BatchNormalization())
         model.add(Dropout(0.15))
 
@@ -232,6 +232,9 @@ def main():
             plotModelPerformance(model, X_val, y_val, history, loss, accuracy)
 
         del model
+
+        print("Waiting 10 seconds between trainings...\n")
+        time.sleep(10)
 
 
 if __name__ == "__main__":
