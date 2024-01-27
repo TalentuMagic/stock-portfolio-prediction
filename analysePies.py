@@ -154,14 +154,14 @@ def getPieData_EurozoneInvestments(ok: bool = None):
 def getPieData_OwnTheWorldIn50(ok: bool = None):
     """True if you want to see the price plots with the indicators\n
     False if you don't want to plot the price history with indicators"""
-    if ok is not None and ok is True:
+    if ok is not None and ok:
         otw = OwnTheWorldIn50()
 
         pieData_otw = dataSetup(otw.pieData)
         for index, name in enumerate(otw.holdings):
             with open(f'./otw/{name}.csv', 'w') as file:
                 pieData_otw[index].to_csv(file)
-    if ok is True:
+    if ok:
         plotPriceHistory(otw, pieData_otw)
 
 
