@@ -16,8 +16,8 @@ def getPieData(holdings: list = None):
 
 class OwnTheWorldIn50:
     def __init__(self):
-        self.holdings = ['BP', 'MSFT', 'AAPL', 'O', 'PEP', 'HON', 'V', 'MA', 'PG', 'AVGO', 'ULVR.L', 'AMT', 'CMCSA', 'JPM', 'ENB', 'NG', 'CL', 'ED', 'GPC', 'ITW', 'APD', 'LEG', 'MAIN', 'BLK', 'CSCO',
-                         'D', 'CVX', 'UPS', 'STAG', 'HSBA.L', 'SMDS.L', 'HPE', 'RIO', 'ADM', 'BHP', 'DOW', 'AWR', 'KR', 'SGRO', 'YUM', 'REL', 'TSCO', 'KMI', 'FAST', 'PLD', 'WHR', 'CMI', 'WSM', 'SHEL', 'BEPC']
+        self.holdings = ['CMCSA', 'MAIN', 'PLD', 'BP', 'MSFT', 'AAPL', 'O', 'PEP', 'HON', 'V', 'MA', 'PG', 'AVGO', 'ULVR.L', 'AMT', 'JPM', 'ENB', 'NG.L', 'CL', 'ED', 'GPC', 'ITW', 'APD', 'BLK', 'CSCO',
+                         'CVX', 'UPS', 'STAG', 'HSBA.L', 'SMDS.L', 'HPE', 'RIO', 'ADM', 'BHP', 'DOW', 'KR', 'SGRO.L', 'YUM', 'REL', 'TSCO', 'KMI', 'FAST', 'WHR', 'CMI', 'WSM', 'SHEL.L', 'BEPC', 'LEG', 'D', 'AWR']
         print(
             f"<INFO> Fetching pie holdings historical data for {self.holdings}")
         self.pieData = getPieData(holdings=self.holdings)
@@ -33,8 +33,8 @@ class ETFs:
 
 class EurozoneInvestments:
     def __init__(self):
-        self.holdings = ['APC.DE', 'MSF.DE', 'ABEA.DE', 'NVD.DE', 'ABEC.DE', 'FB2A.DE', 'MA', 'ADBE', 'NFC.DE', 'EBS.VI', 'AMD', 'QCI.DE', '3V64.DE',
-                         'INGA.AS', 'INTC', 'RMS.PA', 'OMV.VI', 'MBG.DE', 'BMW.DE', 'DBK.DE', 'AIR.DE', 'OR.PA', 'RBI.VI', 'BCO.DE', 'ADS.DE', 'ORA.PA', 'GLE.PA']
+        self.holdings = ['AAPL', 'MSFT', 'GOOGL',
+                         'NVDA', 'META', 'MA', 'ADBE', 'NFLX', 'AMD', 'V', 'QCOM', 'INGA.AS', 'INTC', 'RMS.PA', 'OMV.DE', 'MBG.DE', 'BMW.DE', 'DBK.DE', 'AIR.PA', 'OR.PA', 'BAYN.DE', 'BTI', 'PM', 'F', 'BA', 'ADS.DE', 'ORA.PA', 'GLE.PA', 'DTE.DE', 'VOD.L', 'LSEG.L']
         print(
             f"<INFO> Fetching pie holdings historical data for {self.holdings}")
         self.pieData = getPieData(holdings=self.holdings)
