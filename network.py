@@ -1,3 +1,4 @@
+import time
 from matplotlib import pyplot as plt
 import pandas as pd
 import numpy as np
@@ -13,7 +14,7 @@ import os
 import analysePies
 
 
-def plotModelPerformance(history, loss, accuracy, ok: bool = None):
+def plotModelPerformance(model, X_val, y_val, history, loss, accuracy):
     plt.plot(history.history['accuracy'], label='train_accuracy')
     plt.plot(history.history['val_accuracy'], label='val_accuracy')
     plt.legend()
@@ -80,9 +81,9 @@ def main():
                 ok = bool()
                 price_history = input(
                     "Do you want to plot the price history with indicators for this pie?[y/n]\n")
-                if price_history == "n" or price_history == 'N' or price_history != 'y' or price_history != 'Y' or price_history == '':
+                if price_history == 'n' or price_history == 'N' or price_history == '':
                     ok = False
-                else:
+                elif price_history == 'y' or price_history == 'Y':
                     ok = True
                 analysePies.getPieData_EurozoneInvestments(ok=ok)
                 folder_path = './eurozone/'
@@ -91,7 +92,7 @@ def main():
 
                 metrics = input(
                     "Do you want to plot the model performance metrics?[y/n]\n")
-                if metrics == "n" or metrics == 'N' or metrics != 'y' or metrics != 'Y' or metrics == '':
+                if metrics == "n" or metrics == 'N' or metrics == '':
                     ok = False
                 elif metrics == 'y' or metrics == 'Y':
                     ok = True
@@ -99,9 +100,9 @@ def main():
             case 2:
                 price_history = input(
                     "Do you want to plot the price history with indicators for this pie?[y/n]\n")
-                if price_history == "n" or price_history == 'N' or price_history != 'y' or price_history != 'Y' or price_history == '' or price_history != '':
+                if price_history == 'n' or price_history == 'N' or price_history == '':
                     ok = False
-                else:
+                elif price_history == 'y' or price_history == 'Y':
                     ok = True
                 analysePies.getPieData_OwnTheWorldIn50(ok=ok)
                 folder_path = './otw/'
@@ -110,7 +111,7 @@ def main():
 
                 metrics = input(
                     "Do you want to plot the model performance metrics?[y/n]\n")
-                if metrics == "n" or metrics == 'N' or metrics != 'y' or metrics != 'Y' or metrics == '':
+                if metrics == "n" or metrics == 'N' or metrics == '':
                     ok = False
                 elif metrics == 'y' or metrics == 'Y':
                     ok = True
@@ -118,9 +119,9 @@ def main():
             case 3:
                 price_history = input(
                     "Do you want to plot the price history with indicators for this pie?[y/n]\n")
-                if price_history == "n" or price_history == 'N' or price_history != 'y' or price_history != 'Y' or price_history == '' or price_history != '':
+                if price_history == 'n' or price_history == 'N' or price_history == '':
                     ok = False
-                else:
+                elif price_history == 'y' or price_history == 'Y':
                     ok = True
                 analysePies.getPieData_ETFs(ok=ok)
                 folder_path = './etfs/'
@@ -129,7 +130,7 @@ def main():
 
                 metrics = input(
                     "Do you want to plot the model performance metrics?[y/n]\n")
-                if metrics == "n" or metrics == 'N' or metrics != 'y' or metrics != 'Y' or metrics == '':
+                if metrics == "n" or metrics == 'N' or metrics == '':
                     ok = False
                 elif metrics == 'y' or metrics == 'Y':
                     ok = True
@@ -137,9 +138,9 @@ def main():
             case 4:
                 price_history = input(
                     "Do you want to plot the price history with indicators for this pie?[y/n]\n")
-                if price_history == "n" or price_history == 'N' or price_history != 'y' or price_history != 'Y' or price_history == '' or price_history != '':
+                if price_history == 'n' or price_history == 'N' or price_history == '':
                     ok = False
-                else:
+                elif price_history == 'y' or price_history == 'Y':
                     ok = True
                 analysePies.getPieData_Crypto(ok=ok)
                 folder_path = './crypto/'
@@ -148,7 +149,7 @@ def main():
 
                 metrics = input(
                     "Do you want to plot the model performance metrics?[y/n]\n")
-                if metrics == "n" or metrics == 'N' or metrics != 'y' or metrics != 'Y' or metrics == '':
+                if metrics == "n" or metrics == 'N' or metrics == '':
                     ok = False
                 elif metrics == 'y' or metrics == 'Y':
                     ok = True
@@ -228,4 +229,10 @@ def main():
         loss, accuracy = model.evaluate(X_val, y_val)
 
         if ok:
-            plotModelPerformance(history, loss, accuracy)
+            plotModelPerformance(model, X_val, y_val, history, loss, accuracy)
+
+        del model
+
+
+if __name__ == "__main__":
+    main()
