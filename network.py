@@ -260,7 +260,6 @@ def main():
 
             del model
 
-            break
             print("Waiting 5 seconds between trainings...\n")
             index += 1
 
