@@ -246,7 +246,8 @@ def main():
             print("Waiting 5 seconds between trainings...\n")
             index += 1
 
-            time.sleep(5)
+            if index != len(files):
+                time.sleep(5)
         except Exception as e:
             print("An error occured:", e, '\nRetrying...\n')
             continue
