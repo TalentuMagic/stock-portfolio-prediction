@@ -1,4 +1,5 @@
 import time
+from datetime import datetime
 from matplotlib import pyplot as plt
 import pandas as pd
 import numpy as np
@@ -9,9 +10,12 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, LSTM, Dropout, BatchNormalization
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
-from tensorflow.keras import regularizers
+from tensorflow.keras import regularizers, mixed_precision
 import os
 import analysePies
+
+# using mixed precision for faster model training
+mixed_precision.set_global_policy('mixed_float16')
 
 
 def plotModelPerformance(model, X_val, y_val, history, loss, accuracy):
@@ -24,7 +28,7 @@ def plotModelPerformance(model, X_val, y_val, history, loss, accuracy):
     print("Validation Loss:", loss)
     print("Validation Accuracy:", accuracy)
 
-    y_val_predictions = model.predict(X_val).squeeze()
+    y_val_predictions = model.predict(X_val).squeeze().astype('float32')
 
     # Convert probabilities to binary predictions (0 or 1)
     y_val_predictions_binary = (y_val_predictions > 0.5).astype(int).squeeze()
@@ -158,83 +162,94 @@ def main():
                 print("Invalid choice. Try again...\n")
                 continue
 
-    for file in files:
-        print(file)
-        # Load the dataset
-        df = pd.read_csv(f'./{file}', index_col='Date')
-        df = df.drop(['Volume', 'Close'], axis=1)
+    index = 0
+    while index < len(files):
+        try:
+            print(files[index])
+            # Load the dataset
+            df = pd.read_csv(f'./{files[index]}', index_col='Date')
+            df = df.drop(['Volume', 'Close'], axis=1)
 
-        X = df.iloc[:, :-1].astype('float32')
-        # each row is a different sequence -> each column has 12 features
-        X = np.array(X).reshape(X.shape[0], 1, X.shape[1])
-        y = df.iloc[:, -1]
+            X = df.iloc[:, :-1].astype('float16')
+            # each row is a different sequence -> each column has 12 features
+            X = np.array(X).reshape(X.shape[0], 1, X.shape[1])
+            y = df.iloc[:, -1]
 
-        X_train, X_temp, y_train, y_temp = train_test_split(
-            X, y, test_size=0.25, random_state=42)
-        X_val, X_test, y_val, y_test = train_test_split(
-            X_temp, y_temp, test_size=0.3, random_state=42)
+            X_train, X_temp, y_train, y_temp = train_test_split(
+                X, y, test_size=0.25, random_state=42)
+            X_val, X_test, y_val, y_test = train_test_split(
+                X_temp, y_temp, test_size=0.3, random_state=42)
 
-        # print("X_train shape:", X_train.shape)
-        # print("X_val shape:", X_val.shape)
-        # print("X_test shape:", X_test.shape)
-        # print("y_train shape:", y_train.shape)
-        # print("y_val shape:", y_val.shape)
-        # print("y_test shape:", y_test.shape)
+            # print("X_train shape:", X_train.shape)
+            # print("X_val shape:", X_val.shape)
+            # print("X_test shape:", X_test.shape)
+            # print("y_train shape:", y_train.shape)
+            # print("y_val shape:", y_val.shape)
+            # print("y_test shape:", y_test.shape)
 
-        # Define the checkpoint callback
-        filename = file[2:-4].split(".")
-        if len(filename) > 1:
-            checkpoint_path = f'./models/{filename[0]}_{filename[1]}.h5'
-        else:
-            checkpoint_path = f'./models/{filename[0]}.h5'
+            print(X_train.dtype)
 
-        checkpoint = ModelCheckpoint(
-            checkpoint_path,
-            monitor='val_accuracy',  # You can use other metrics like 'val_loss'
-            save_best_only=True,
-            mode='max',  # 'max' for accuracy, 'min' for loss, 'auto' for automatic
-            verbose=1
-        )
-        early_stopping = EarlyStopping(
-            monitor='val_loss', patience=25, restore_best_weights=True)
+            # Define the checkpoint callback
+            filename = files[index][2:-4].split(".")
+            if len(filename) > 1:
+                checkpoint_path = rf'./models/{filename[0]}_{filename[1]}.h5'
+            else:
+                checkpoint_path = rf'./models/{filename[0]}.h5'
 
-        # Define the model
-        model = Sequential()
-        # Input layer
-        model.add(LSTM(512, input_shape=(
-            1, X.shape[2]), return_sequences=True))
-        model.add(BatchNormalization())
-        model.add(Dropout(0.15))
+            checkpoint = ModelCheckpoint(
+                checkpoint_path,
+                monitor='val_accuracy',  # You can use other metrics like 'val_loss'
+                save_best_only=True,
+                mode='max',  # 'max' for accuracy, 'min' for loss, 'auto' for automatic
+                verbose=1
+            )
+            early_stopping = EarlyStopping(
+                monitor='val_loss', patience=25, restore_best_weights=True)
 
-        # 2nd layer
-        model.add(LSTM(256, return_sequences=True))
-        model.add(BatchNormalization())
-        model.add(Dropout(0.15))
+            # Define the model
+            model = Sequential()
+            print(model.dtype_policy)
+            # Input layer
+            model.add(LSTM(512, input_shape=(
+                1, X.shape[2]), return_sequences=True))
+            model.add(BatchNormalization())
+            model.add(Dropout(0.15))
 
-        # 3rd layer
-        model.add(LSTM(128, return_sequences=True))
-        model.add(BatchNormalization())
+            # 2nd layer
+            model.add(LSTM(256, return_sequences=True))
+            model.add(BatchNormalization())
+            model.add(Dropout(0.15))
 
-        # Output layer
-        model.add(Dense(1, activation='sigmoid',
-                        kernel_regularizer=regularizers.l2(0.01)))
-        optimizer = Adam(learning_rate=0.00025)
-        model.compile(optimizer=optimizer,
-                      loss='binary_crossentropy', metrics=['accuracy'])
+            # 3rd layer
+            model.add(LSTM(128, return_sequences=True))
+            model.add(BatchNormalization())
 
-        model.summary()
-        history = model.fit(X_train, y_train, epochs=100, batch_size=64,
-                            validation_data=(X_val, y_val), callbacks=[checkpoint, early_stopping], verbose=1)
+            # Output layer
+            model.add(Dense(1, activation='sigmoid',
+                            kernel_regularizer=regularizers.l2(0.01)))
+            optimizer = Adam(learning_rate=0.00025)
+            model.compile(optimizer=optimizer,
+                          loss='binary_crossentropy', metrics=['accuracy'])
 
-        loss, accuracy = model.evaluate(X_val, y_val)
+            model.summary()
+            history = model.fit(X_train, y_train, epochs=100, batch_size=64,
+                                validation_data=(X_val, y_val), callbacks=[checkpoint, early_stopping], verbose=1)
 
-        if ok:
-            plotModelPerformance(model, X_val, y_val, history, loss, accuracy)
+            loss, accuracy = model.evaluate(X_val, y_val)
 
-        del model
+            if ok:
+                plotModelPerformance(model, X_val, y_val,
+                                     history, loss, accuracy)
 
-        print("Waiting 10 seconds between trainings...\n")
-        time.sleep(10)
+            del model
+
+            print("Waiting 5 seconds between trainings...\n")
+            index += 1
+
+            time.sleep(5)
+        except Exception as e:
+            print("An error occured:", e, '\nRetrying...\n')
+            continue
 
 
 if __name__ == "__main__":
