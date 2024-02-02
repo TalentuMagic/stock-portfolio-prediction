@@ -173,29 +173,29 @@ def main():
             X = df.iloc[:, :-1].astype('float16')
             y = df.iloc[:, -1]
 
-            # select the past 5 years for validation data
+            # select the past year for validation data
             X.index = pd.to_datetime(X.index)
             end_date = X.index.max()
             start_date = end_date - pd.DateOffset(years=1)
-            X_past_5years = X[(X.index >= start_date)
-                              & (X.index <= end_date)]
+            X_past_1year = X[(X.index >= start_date)
+                             & (X.index <= end_date)]
             # input data must be only until the validation set
             X = X[X.index <= start_date]
 
             y.index = pd.to_datetime(y.index)
             end_date = y.index.max()
             start_date = end_date - pd.DateOffset(years=1)
-            y_past_5years = y[(y.index >= start_date) & (y.index <= end_date)]
+            y_past_1year = y[(y.index >= start_date) & (y.index <= end_date)]
             # output data must be only until validation set
             y_train = y[y.index <= start_date]
 
             # each row is a different sequence -> each column has 12 features
             X_train = np.array(X).reshape(X.shape[0], 1, X.shape[1])
-            X_past_5years = np.array(X_past_5years).reshape(
-                X_past_5years.shape[0], 1, X_past_5years.shape[1])
+            X_past_1year = np.array(X_past_1year).reshape(
+                X_past_1year.shape[0], 1, X_past_1year.shape[1])
 
             X_val, X_test, y_val, y_test = train_test_split(
-                X_past_5years, y_past_5years, test_size=0.3, random_state=42)
+                X_past_1year, y_past_1year, test_size=0.3, random_state=42)
 
             # print("X_train shape:", X_train.shape)
             # print("X_val shape:", X_val.shape)
