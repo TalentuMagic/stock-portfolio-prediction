@@ -19,6 +19,8 @@ def dataSetup(pieData: list = None):
         stock_data['LowerBand'] = stock_data['SMA_20'] - \
             2 * stock_data['Adj Close'].rolling(window=20).std()
         stock_data['Tomorrow'] = stock_data['Adj Close'].shift(-1)
+        stock_data['Target'] = stock_data['Adj Close'].shift(
+            -1) - stock_data['Adj Close']
         stock_data['TargetClass'] = (
             stock_data['Tomorrow'] > stock_data['Adj Close']).astype(int)
 
@@ -171,19 +173,24 @@ def main():
             "[1] Eurozone Investments\n[2] Own the World in 50\n[3] World ETFs\n[4] Crypto")
         user_choice = int(
             input("What pie do you want to analyze?(Enter a number from above)\n"))
-
+        price_history = input(
+            "Do you want to plot the price history with indicators for this pie?[y/n]\n")
+        if price_history == 'n' or price_history == 'N' or price_history == '':
+            ok = False
+        elif price_history == 'y' or price_history == 'Y':
+            ok = True
         match user_choice:
             case 1:
-                getPieData_EurozoneInvestments(True)
+                getPieData_EurozoneInvestments(ok)
                 break
             case 2:
-                getPieData_OwnTheWorldIn50(True)
+                getPieData_OwnTheWorldIn50(ok)
                 break
             case 3:
-                getPieData_ETFs(True)
+                getPieData_ETFs(ok)
                 break
             case 4:
-                getPieData_Crypto(True)
+                getPieData_Crypto(ok)
                 break
             case _:
                 print("Invalid choice. Try again...\n")

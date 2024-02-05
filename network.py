@@ -1,3 +1,4 @@
+from statistics import mode
 import time
 from datetime import datetime
 from matplotlib import pyplot as plt
@@ -18,7 +19,7 @@ import analysePies
 mixed_precision.set_global_policy('mixed_float16')
 
 
-def plotModelPerformance(model, X_val, y_val, history, loss, accuracy):
+def plotModelPerformance(model, X_test, y_test, history, loss, accuracy):
     plt.plot(history.history['accuracy'], label='train_accuracy')
     plt.plot(history.history['val_accuracy'], label='val_accuracy')
     plt.legend()
@@ -28,41 +29,48 @@ def plotModelPerformance(model, X_val, y_val, history, loss, accuracy):
     print("Validation Loss:", loss)
     print("Validation Accuracy:", accuracy)
 
-    y_val_predictions = model.predict(X_val).squeeze().astype('float32')
+    y_test_predictions = model.predict(X_test).squeeze().astype('float32')
 
     # Convert probabilities to binary predictions (0 or 1)
-    y_val_predictions_binary = (y_val_predictions > 0.5).astype(int).squeeze()
+    y_test_predictions_binary = (
+        y_test_predictions > 0.5).astype(int).squeeze()
 
-    # print(y_val_predictions_binary[:3])
-    # print(y_val_predictions[:3])
+    print("\nMost Occurring Prediction:", mode(y_test_predictions_binary))
+
+    # print(y_test_predictions_binary[:3])
+    # print(y_test_predictions[:3])
 
     # Create confusion matrix
-    cm = confusion_matrix(y_val, y_val_predictions_binary)
+    cm = confusion_matrix(y_test, y_test_predictions_binary)
     print("Confusion Matrix:")
     print(cm)
 
     # Classification Report
     print("Classification Report:")
-    print(classification_report(y_val, y_val_predictions_binary))
+    print(classification_report(y_test, y_test_predictions_binary))
 
-    # Plot actual vs. predicted values
+    # Plot actual vs predicted values
     plt.figure(figsize=(10, 6))
-    plt.scatter(y_val, y_val_predictions, alpha=0.5)
-    plt.xlabel('Actual Values')
-    plt.ylabel('Predicted Values')
+    plt.scatter(y_test.index, y_test, alpha=0.5,
+                color='green', label='Actual Values')
+    plt.scatter(y_test.index, y_test_predictions, alpha=0.5,
+                color='red', label='Predicted Values')
+    plt.xlabel('Date')
+    plt.ylabel('Values')
     plt.title('Actual vs. Predicted Values on Validation Set')
+    plt.legend()
     plt.show()
 
     # Plot histogram of predicted probabilities
     plt.figure(figsize=(10, 6))
-    seaborn.histplot(y_val_predictions, bins=50, kde=True)
+    seaborn.histplot(y_test_predictions, bins=50, kde=True)
     plt.xlabel('Predicted Probabilities')
     plt.ylabel('Frequency')
     plt.title('Histogram of Predicted Probabilities on Validation Set')
     plt.show()
 
     # Flatten the probabilities
-    flat_probabilities = y_val_predictions.flatten()
+    flat_probabilities = y_test_predictions.flatten()
 
     # Plot the distribution of predicted probabilities
     plt.figure(figsize=(10, 6))
@@ -209,9 +217,9 @@ def main():
             # Define the checkpoint callback
             filename = files[index][2:-4].split(".")
             if len(filename) > 1:
-                checkpoint_path = rf'./models/{filename[0]}_{filename[1]}.h5'
+                checkpoint_path = rf'./models/classification/{filename[0]}_{filename[1]}.h5'
             else:
-                checkpoint_path = rf'./models/{filename[0]}.h5'
+                checkpoint_path = rf'./models/classification/{filename[0]}.h5'
 
             checkpoint = ModelCheckpoint(
                 checkpoint_path,
@@ -228,22 +236,13 @@ def main():
             print(model.dtype_policy)
             # Input layer
             model.add(LSTM(512, input_shape=(
-                1, X_train.shape[2]), return_sequences=True))
+                1, X_train.shape[2]), return_sequences=True, kernel_regularizer='l1_l2'))
             model.add(BatchNormalization())
             model.add(Dropout(0.15))
-
-            # 2nd layer
-            model.add(LSTM(256, return_sequences=True))
-            model.add(BatchNormalization())
-            model.add(Dropout(0.15))
-
-            # 3rd layer
-            model.add(LSTM(128, return_sequences=True))
-            model.add(BatchNormalization())
 
             # Output layer
             model.add(Dense(1, activation='sigmoid',
-                            kernel_regularizer=regularizers.l2(0.01)))
+                            kernel_regularizer='l1_l2'))
             optimizer = Adam(learning_rate=0.00025)
             model.compile(optimizer=optimizer,
                           loss='binary_crossentropy', metrics=['accuracy'])
