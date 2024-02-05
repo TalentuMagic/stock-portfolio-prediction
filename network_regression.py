@@ -224,10 +224,10 @@ def main():
 
             # Output layer
             model.add(Dense(1, activation='linear',
-                            kernel_regularizer='l1_l2'))
+                            kernel_regularizer=regularizers.l2(0.01)))
             optimizer = Adam(learning_rate=0.00025)
             model.compile(optimizer=optimizer,
-                          loss='log_cosh', metrics=['mae', 'mse', RootMeanSquaredError()])
+                          loss='huber', metrics=['mae', 'mse', RootMeanSquaredError()])
 
             model.summary()
             history = model.fit(X_train, y_train, epochs=100, batch_size=64,
