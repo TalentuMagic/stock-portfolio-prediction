@@ -12,6 +12,7 @@ from tensorflow.keras.layers import Dense, LSTM, Dropout, BatchNormalization
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 from tensorflow.keras import regularizers, mixed_precision
+from tensorflow.keras.metrics import RootMeanSquaredError
 import os
 import analysePies
 
@@ -19,31 +20,24 @@ import analysePies
 mixed_precision.set_global_policy('mixed_float16')
 
 
-def plotModelPerformance(model, X_test, y_test, history, loss, mse, mae):
+def plotModelPerformance(model, X_test, y_test, history, y_test_predictions, loss, mse, mae, rmse):
     plt.plot(history.history['loss'], label='train_loss')
     plt.plot(history.history['val_loss'], label='val_loss')
+    plt.grid()
     plt.legend()
     plt.show()
 
-    # Print the evaluation results
-    print("Validation Loss:", loss)
-    print("Validation Mean Squared Error (MSE):", mse)
-    print("Validation Mean Absolute Error (MAE):", mae)
-
-    # Make predictions on the test set
-    y_test_predictions = model.predict(X_test).squeeze().astype('float32')
-
-    print(y_test_predictions)
-
-    # print(y_test_predictions_binary[:3])
-    # print(y_test_predictions[:3])
-
-    # Plot actual vs. predicted values
+    # Plot actual vs predicted values
     plt.figure(figsize=(10, 6))
-    plt.scatter(y_test, y_test_predictions, alpha=0.5)
-    plt.xlabel('Actual Values')
-    plt.ylabel('Predicted Values')
+    plt.scatter(y_test.index, y_test, alpha=0.5,
+                color='green', label='Actual Values')
+    plt.scatter(y_test.index, y_test_predictions, alpha=0.5,
+                color='red', label='Predicted Values')
+    plt.xlabel('Date')
+    plt.ylabel('Values')
     plt.title('Actual vs. Predicted Values on Validation Set')
+    plt.grid()
+    plt.legend()
     plt.show()
 
     # Plot histogram of predicted probabilities
@@ -52,6 +46,7 @@ def plotModelPerformance(model, X_test, y_test, history, loss, mse, mae):
     plt.xlabel('Predicted Probabilities')
     plt.ylabel('Frequency')
     plt.title('Histogram of Predicted Probabilities on Validation Set')
+    plt.grid()
     plt.show()
 
     # Flatten the probabilities
@@ -64,9 +59,8 @@ def plotModelPerformance(model, X_test, y_test, history, loss, mse, mae):
     plt.title('Distribution of Predicted Probabilities on Validation Set')
     plt.xlabel('Predicted Probabilities')
     plt.ylabel('Density')
+    plt.grid()
     plt.show()
-
-    print("\nMost Occurring Prediction:", mode(y_test_predictions))
 
 
 def main():
@@ -166,7 +160,7 @@ def main():
             df = df.drop(['Volume', 'Close'], axis=1)
 
             X = df.iloc[:, :-1].astype('float16')
-            y = df.iloc[:, -2]
+            y = df.iloc[:, -2].astype('float16')
 
             # select the past year for validation data
             X.index = pd.to_datetime(X.index)
@@ -204,58 +198,80 @@ def main():
             # Define the checkpoint callback
             filename = files[index][2:-4].split(".")
             if len(filename) > 1:
-                checkpoint_path = rf'./models/{filename[0]}_{filename[1]}.h5'
+                checkpoint_path = rf'./models/regression/{filename[0]}_{filename[1]}.h5'
             else:
-                checkpoint_path = rf'./models/{filename[0]}.h5'
+                checkpoint_path = rf'./models/regression/{filename[0]}.h5'
 
             checkpoint = ModelCheckpoint(
                 checkpoint_path,
-                monitor='val_loss',  # You can use other metrics like 'val_loss'
+                # You can use other metrics like 'val_loss'
+                monitor='val_root_mean_squared_error',
                 save_best_only=True,
                 mode='min',  # 'max' for accuracy, 'min' for loss, 'auto' for automatic
                 verbose=1
             )
             early_stopping = EarlyStopping(
-                monitor='val_loss', patience=25, restore_best_weights=True)
+                monitor='val_root_mean_squared_error', patience=25, restore_best_weights=True)
 
             # Define the model
             model = Sequential()
             print(model.dtype_policy)
             # Input layer
             model.add(LSTM(512, input_shape=(
-                1, X_train.shape[2]), return_sequences=True))
+                1, X_train.shape[2]), return_sequences=True, kernel_regularizer='l1_l2'))
             model.add(BatchNormalization())
             model.add(Dropout(0.15))
-
-            # 2nd layer
-            model.add(LSTM(256, return_sequences=True))
-            model.add(BatchNormalization())
-            model.add(Dropout(0.15))
-
-            # 3rd layer
-            model.add(LSTM(128, return_sequences=True))
-            model.add(BatchNormalization())
 
             # Output layer
             model.add(Dense(1, activation='linear',
-                            kernel_regularizer=regularizers.l2(0.01)))
+                            kernel_regularizer='l1_l2'))
             optimizer = Adam(learning_rate=0.00025)
             model.compile(optimizer=optimizer,
-                          loss='mean_squared_error', metrics=['mae', 'mse'])
+                          loss='log_cosh', metrics=['mae', 'mse', RootMeanSquaredError()])
 
             model.summary()
             history = model.fit(X_train, y_train, epochs=100, batch_size=64,
                                 validation_data=(X_val, y_val), callbacks=[checkpoint, early_stopping], verbose=1)
 
-            loss, mae, mse = model.evaluate(X_test, y_test)
+            loss, mae, mse, rmse = model.evaluate(X_test, y_test)
+
+            time.sleep(1.5)
+            # Make predictions on the test set
+            y_test_predictions = np.array(model.predict(
+                X_test).astype('float32')).reshape(-1)
+
+            # Print the evaluation results
+            print("\nValidation Loss:", loss)
+            print("Validation Mean Squared Error (MSE):", mse)
+            print("Validation Mean Absolute Error (MAE):", mae)
+            print("Validation Root Mean Sqared Error (RMSE):", rmse)
+
+            # Plot actual vs. predicted values
+            print("\nMost Occurring Prediction:", mode(y_test_predictions))
+            # Count occurrences within the threshold
+            if np.abs(mse) + np.abs(mae) + np.abs(loss) - rmse + (rmse*0.25) <= rmse*0.25:
+                threshold = np.abs(mse) + np.abs(mae) + np.abs(loss)
+            else:
+                threshold = np.abs(rmse) + np.abs(rmse*0.25)
+
+            close_enough_count = np.sum(
+                (np.abs(y_test) - np.abs(y_test_predictions)) <= threshold)
+            close_enough_percentage = (np.sum(
+                (np.abs(y_test) - np.abs(y_test_predictions)) <= threshold)/len(y_test))*100
+            close_enough_indices = np.where(
+                (np.abs(y_test) - np.abs(y_test_predictions)) <= threshold)
+            print(
+                f"Number of predictions close enough (to actual value within {threshold}): {close_enough_count}/{len(y_test)} ({close_enough_percentage}%)")
+            mean_close_enough = np.mean(
+                y_test_predictions[close_enough_indices])
+            print(
+                f"Mean of close enough (to actual value): {mean_close_enough}")
 
             if ok:
                 plotModelPerformance(model, X_test, y_test,
-                                     history, loss, mse, mae)
+                                     history, y_test_predictions, loss, mse, mae, rmse)
 
             del model
-
-            break
 
             print("Waiting 5 seconds between trainings...\n")
             index += 1
