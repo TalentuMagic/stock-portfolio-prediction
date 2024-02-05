@@ -7,47 +7,28 @@ import numpy as np
 import seaborn
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import train_test_split
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, LSTM, Dropout, BatchNormalization
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
-from tensorflow.keras import regularizers, mixed_precision
+from keras.models import Sequential
+from keras.layers import Dense, LSTM, Dropout, BatchNormalization
+from keras.optimizers import Adam
+from keras.callbacks import ModelCheckpoint, EarlyStopping
+from keras import regularizers, mixed_precision
 import os
 import analysePies
 
 # using mixed precision for faster model training
 mixed_precision.set_global_policy('mixed_float16')
+start = datetime.now()
 
 
-def plotModelPerformance(model, X_test, y_test, history, loss, accuracy):
-    plt.plot(history.history['accuracy'], label='train_accuracy')
-    plt.plot(history.history['val_accuracy'], label='val_accuracy')
+def plotModelPerformance(model, X_test, y_test, history, y_test_predictions, loss, accuracy):
+    plt.plot(history.history['accuracy'],
+             label='train_accuracy', linestyle='dashdot')
+    plt.plot(history.history['val_accuracy'],
+             label='val_accuracy', color='green')
+    plt.plot(history.history['val_loss'],
+             label='val_loss', linestyle="dashed", color='red')
     plt.legend()
     plt.show()
-
-    # Print the evaluation results
-    print("Validation Loss:", loss)
-    print("Validation Accuracy:", accuracy)
-
-    y_test_predictions = model.predict(X_test).squeeze().astype('float32')
-
-    # Convert probabilities to binary predictions (0 or 1)
-    y_test_predictions_binary = (
-        y_test_predictions > 0.5).astype(int).squeeze()
-
-    print("\nMost Occurring Prediction:", mode(y_test_predictions_binary))
-
-    # print(y_test_predictions_binary[:3])
-    # print(y_test_predictions[:3])
-
-    # Create confusion matrix
-    cm = confusion_matrix(y_test, y_test_predictions_binary)
-    print("Confusion Matrix:")
-    print(cm)
-
-    # Classification Report
-    print("Classification Report:")
-    print(classification_report(y_test, y_test_predictions_binary))
 
     # Plot actual vs predicted values
     plt.figure(figsize=(10, 6))
@@ -223,9 +204,9 @@ def main():
 
             checkpoint = ModelCheckpoint(
                 checkpoint_path,
-                monitor='val_accuracy',  # You can use other metrics like 'val_loss'
+                monitor='val_loss',  # You can use other metrics like 'val_loss'
                 save_best_only=True,
-                mode='max',  # 'max' for accuracy, 'min' for loss, 'auto' for automatic
+                mode='min',  # 'max' for accuracy, 'min' for loss, 'auto' for automatic
                 verbose=1
             )
             early_stopping = EarlyStopping(
@@ -242,7 +223,7 @@ def main():
 
             # Output layer
             model.add(Dense(1, activation='sigmoid',
-                            kernel_regularizer='l1_l2'))
+                            kernel_regularizer=regularizers.l2(0.01)))
             optimizer = Adam(learning_rate=0.00025)
             model.compile(optimizer=optimizer,
                           loss='binary_crossentropy', metrics=['accuracy'])
@@ -253,9 +234,33 @@ def main():
 
             loss, accuracy = model.evaluate(X_test, y_test)
 
+            # Print the evaluation results
+            print("Validation Loss:", loss)
+            print("Validation Accuracy:", accuracy)
+
+            time.sleep(1.5)
+            y_test_predictions = model.predict(
+                X_test).squeeze().astype('float32')
+
+            # Convert probabilities to binary predictions (0 or 1)
+            y_test_predictions_binary = (
+                y_test_predictions >= 0.6).astype(int).squeeze()
+
+            print("\nMost Occurring Prediction:",
+                  mode(y_test_predictions_binary))
+
+            # Create confusion matrix
+            cm = confusion_matrix(y_test, y_test_predictions_binary)
+            print("Confusion Matrix:")
+            print(cm)
+
+            # Classification Report
+            print("Classification Report:")
+            print(classification_report(y_test, y_test_predictions_binary))
+
             if ok:
                 plotModelPerformance(model, X_test, y_test,
-                                     history, loss, accuracy)
+                                     history, y_test_predictions, loss, accuracy)
 
             del model
 
@@ -267,6 +272,7 @@ def main():
         except Exception as e:
             print("An error occured:", e, '\nRetrying...\n')
             continue
+    print("\nTraining on the whole pie took:", datetime.now() - start)
 
 
 if __name__ == "__main__":
