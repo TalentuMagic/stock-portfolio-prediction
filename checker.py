@@ -244,13 +244,12 @@ def main():
                 with open(f'./check_results/{filename[0]}_{filename[1]}.json', 'w') as file:
                     json.dump(results, file)
             else:
-                with open(f'./check_results/{filename[0]}', 'w') as file:
+                with open(f'./check_results/{filename[0]}.json', 'w') as file:
                     json.dump(results, file)
 
             index += 1
         except Exception as e:
             print("An error occured:", e, '\nRetrying...\n')
-            raise SystemError(e)
             continue
 
 
