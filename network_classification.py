@@ -63,93 +63,166 @@ def plotModelPerformance(model, X_test, y_test, history, y_test_predictions, los
     plt.show()
 
 
-def main():
-    while True:
-        print(
-            "[1] Eurozone Investments\n[2] Own the World in 50\n[3] World ETFs\n[4] Crypto")
-        user_choice = int(
-            input("What pie do you want to analyze?(Enter a number from above)\n"))
-        match user_choice:
-            case 1:
-                ok = bool()
-                price_history = input(
-                    "Do you want to plot the price history with indicators for this pie?[y/n]\n")
-                if price_history == 'n' or price_history == 'N' or price_history == '':
-                    ok = False
-                elif price_history == 'y' or price_history == 'Y':
-                    ok = True
-                analysePies.getPieData_EurozoneInvestments(ok=ok)
-                folder_path = './eurozone/'
-                files = [folder_path+f for f in os.listdir(folder_path) if os.path.isfile(
-                    os.path.join(folder_path, f))]
+def read_datasets(user_choice: int = None, price_history: str = None, metrics: str = None):
+    if user_choice is None and price_history is None and metrics is None:
+        while True:
+            print(
+                "[1] Eurozone Investments\n[2] Own the World in 50\n[3] World ETFs\n[4] Crypto")
+            user_choice = int(
+                input("What pie do you want to analyze?(Enter a number from above)\n"))
+            match user_choice:
+                case 1:
+                    ok = bool()
+                    price_history = input(
+                        "Do you want to plot the price history with indicators for this pie?[y/n]\n")
+                    if price_history == 'n' or price_history == 'N' or price_history == '':
+                        ok = False
+                    elif price_history == 'y' or price_history == 'Y':
+                        ok = True
+                    analysePies.getPieData_EurozoneInvestments(ok=ok)
+                    folder_path = './eurozone/'
+                    files = [folder_path+f for f in os.listdir(folder_path) if os.path.isfile(
+                        os.path.join(folder_path, f))]
 
-                metrics = input(
-                    "Do you want to plot the model performance metrics?[y/n]\n")
-                if metrics == "n" or metrics == 'N' or metrics == '':
-                    ok = False
-                elif metrics == 'y' or metrics == 'Y':
-                    ok = True
-                break
-            case 2:
-                price_history = input(
-                    "Do you want to plot the price history with indicators for this pie?[y/n]\n")
-                if price_history == 'n' or price_history == 'N' or price_history == '':
-                    ok = False
-                elif price_history == 'y' or price_history == 'Y':
-                    ok = True
-                analysePies.getPieData_OwnTheWorldIn50(ok=ok)
-                folder_path = './otw/'
-                files = [folder_path+f for f in os.listdir(folder_path) if os.path.isfile(
-                    os.path.join(folder_path, f))]
+                    metrics = input(
+                        "Do you want to plot the model performance metrics?[y/n]\n")
+                    if metrics == "n" or metrics == 'N' or metrics == '':
+                        ok = False
+                    elif metrics == 'y' or metrics == 'Y':
+                        ok = True
+                    break
+                case 2:
+                    price_history = input(
+                        "Do you want to plot the price history with indicators for this pie?[y/n]\n")
+                    if price_history == 'n' or price_history == 'N' or price_history == '':
+                        ok = False
+                    elif price_history == 'y' or price_history == 'Y':
+                        ok = True
+                    analysePies.getPieData_OwnTheWorldIn50(ok=ok)
+                    folder_path = './otw/'
+                    files = [folder_path+f for f in os.listdir(folder_path) if os.path.isfile(
+                        os.path.join(folder_path, f))]
 
-                metrics = input(
-                    "Do you want to plot the model performance metrics?[y/n]\n")
-                if metrics == "n" or metrics == 'N' or metrics == '':
-                    ok = False
-                elif metrics == 'y' or metrics == 'Y':
-                    ok = True
-                break
-            case 3:
-                price_history = input(
-                    "Do you want to plot the price history with indicators for this pie?[y/n]\n")
-                if price_history == 'n' or price_history == 'N' or price_history == '':
-                    ok = False
-                elif price_history == 'y' or price_history == 'Y':
-                    ok = True
-                analysePies.getPieData_ETFs(ok=ok)
-                folder_path = './etfs/'
-                files = [folder_path+f for f in os.listdir(folder_path) if os.path.isfile(
-                    os.path.join(folder_path, f))]
+                    metrics = input(
+                        "Do you want to plot the model performance metrics?[y/n]\n")
+                    if metrics == "n" or metrics == 'N' or metrics == '':
+                        ok = False
+                    elif metrics == 'y' or metrics == 'Y':
+                        ok = True
+                    break
+                case 3:
+                    price_history = input(
+                        "Do you want to plot the price history with indicators for this pie?[y/n]\n")
+                    if price_history == 'n' or price_history == 'N' or price_history == '':
+                        ok = False
+                    elif price_history == 'y' or price_history == 'Y':
+                        ok = True
+                    analysePies.getPieData_ETFs(ok=ok)
+                    folder_path = './etfs/'
+                    files = [folder_path+f for f in os.listdir(folder_path) if os.path.isfile(
+                        os.path.join(folder_path, f))]
 
-                metrics = input(
-                    "Do you want to plot the model performance metrics?[y/n]\n")
-                if metrics == "n" or metrics == 'N' or metrics == '':
-                    ok = False
-                elif metrics == 'y' or metrics == 'Y':
-                    ok = True
-                break
-            case 4:
-                price_history = input(
-                    "Do you want to plot the price history with indicators for this pie?[y/n]\n")
-                if price_history == 'n' or price_history == 'N' or price_history == '':
-                    ok = False
-                elif price_history == 'y' or price_history == 'Y':
-                    ok = True
-                analysePies.getPieData_Crypto(ok=ok)
-                folder_path = './crypto/'
-                files = [folder_path+f for f in os.listdir(folder_path) if os.path.isfile(
-                    os.path.join(folder_path, f))]
+                    metrics = input(
+                        "Do you want to plot the model performance metrics?[y/n]\n")
+                    if metrics == "n" or metrics == 'N' or metrics == '':
+                        ok = False
+                    elif metrics == 'y' or metrics == 'Y':
+                        ok = True
+                    break
+                case 4:
+                    price_history = input(
+                        "Do you want to plot the price history with indicators for this pie?[y/n]\n")
+                    if price_history == 'n' or price_history == 'N' or price_history == '':
+                        ok = False
+                    elif price_history == 'y' or price_history == 'Y':
+                        ok = True
+                    analysePies.getPieData_Crypto(ok=ok)
+                    folder_path = './crypto/'
+                    files = [folder_path+f for f in os.listdir(folder_path) if os.path.isfile(
+                        os.path.join(folder_path, f))]
 
-                metrics = input(
-                    "Do you want to plot the model performance metrics?[y/n]\n")
-                if metrics == "n" or metrics == 'N' or metrics == '':
-                    ok = False
-                elif metrics == 'y' or metrics == 'Y':
-                    ok = True
-                break
-            case _:
-                print("Invalid choice. Try again...\n")
-                continue
+                    metrics = input(
+                        "Do you want to plot the model performance metrics?[y/n]\n")
+                    if metrics == "n" or metrics == 'N' or metrics == '':
+                        ok = False
+                    elif metrics == 'y' or metrics == 'Y':
+                        ok = True
+                    break
+                case _:
+                    print("Invalid choice. Try again...\n")
+                    continue
+    else:
+        while True:
+            match user_choice:
+                case 1:
+                    ok = bool()
+                    if price_history == 'n' or price_history == 'N' or price_history == '':
+                        ok = False
+                    elif price_history == 'y' or price_history == 'Y':
+                        ok = True
+                    analysePies.getPieData_EurozoneInvestments(ok=ok)
+                    folder_path = './eurozone/'
+                    files = [folder_path+f for f in os.listdir(folder_path) if os.path.isfile(
+                        os.path.join(folder_path, f))]
+
+                    if metrics == "n" or metrics == 'N' or metrics == '':
+                        ok = False
+                    elif metrics == 'y' or metrics == 'Y':
+                        ok = True
+                    break
+                case 2:
+                    if price_history == 'n' or price_history == 'N' or price_history == '':
+                        ok = False
+                    elif price_history == 'y' or price_history == 'Y':
+                        ok = True
+                    analysePies.getPieData_OwnTheWorldIn50(ok=ok)
+                    folder_path = './otw/'
+                    files = [folder_path+f for f in os.listdir(folder_path) if os.path.isfile(
+                        os.path.join(folder_path, f))]
+
+                    if metrics == "n" or metrics == 'N' or metrics == '':
+                        ok = False
+                    elif metrics == 'y' or metrics == 'Y':
+                        ok = True
+                    break
+                case 3:
+                    if price_history == 'n' or price_history == 'N' or price_history == '':
+                        ok = False
+                    elif price_history == 'y' or price_history == 'Y':
+                        ok = True
+                    analysePies.getPieData_ETFs(ok=ok)
+                    folder_path = './etfs/'
+                    files = [folder_path+f for f in os.listdir(folder_path) if os.path.isfile(
+                        os.path.join(folder_path, f))]
+
+                    if metrics == "n" or metrics == 'N' or metrics == '':
+                        ok = False
+                    elif metrics == 'y' or metrics == 'Y':
+                        ok = True
+                    break
+                case 4:
+                    if price_history == 'n' or price_history == 'N' or price_history == '':
+                        ok = False
+                    elif price_history == 'y' or price_history == 'Y':
+                        ok = True
+                    analysePies.getPieData_Crypto(ok=ok)
+                    folder_path = './crypto/'
+                    files = [folder_path+f for f in os.listdir(folder_path) if os.path.isfile(
+                        os.path.join(folder_path, f))]
+
+                    if metrics == "n" or metrics == 'N' or metrics == '':
+                        ok = False
+                    elif metrics == 'y' or metrics == 'Y':
+                        ok = True
+                    break
+                case _:
+                    print("Invalid choice. Try again...\n")
+                    continue
+    return files
+
+
+def main(user_choice: int = None, price_history: str = None, metrics: str = None):
+    files = read_datasets(user_choice, price_history, metrics)
 
     index = 0
     while index < len(files):
