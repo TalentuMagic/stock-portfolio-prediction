@@ -167,12 +167,12 @@ def read_datasets(user_choice: int = None, price_history: str = None, metrics: s
                 case _:
                     print("Invalid choice. Try again...\n")
                     continue
-    return files
+    return files, ok
 
 
 def main(user_choice: int = None, price_history: str = None, metrics: str = None):
     results = dict()
-    files = read_datasets(user_choice, price_history, metrics)
+    files, ok = read_datasets(user_choice, price_history, metrics)
     index = 0
     while index < len(files):
         try:
