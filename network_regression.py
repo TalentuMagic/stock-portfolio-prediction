@@ -7,12 +7,12 @@ import seaborn
 from statistics import mode
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import train_test_split
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, LSTM, Dropout, BatchNormalization
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
-from tensorflow.keras import regularizers, mixed_precision
-from tensorflow.keras.metrics import RootMeanSquaredError
+from keras.models import Sequential
+from keras.layers import Dense, LSTM, Dropout, BatchNormalization
+from keras.optimizers import Adam
+from keras.callbacks import ModelCheckpoint, EarlyStopping
+from keras import regularizers, mixed_precision
+from keras.metrics import RootMeanSquaredError
 from sklearn.preprocessing import RobustScaler
 import os
 import analysePies
@@ -56,12 +56,9 @@ def plotModelPerformance(model, X_test, y_test, history, y_test_predictions, los
     plt.grid()
     plt.show()
 
-    # Flatten the probabilities
-    flat_probabilities = y_test_predictions.flatten()
-
     # Plot the distribution of predicted probabilities
     plt.figure(figsize=(10, 6))
-    seaborn.histplot(flat_probabilities, bins=30, kde=True,
+    seaborn.histplot(y_test_predictions, bins=30, kde=True,
                      color='blue', stat='density')
     plt.title('Distribution of Predicted Probabilities on Validation Set')
     plt.xlabel('Predicted Probabilities')
@@ -320,6 +317,8 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
             model.summary()
             history = model.fit(X_train, y_train, epochs=100, batch_size=64,
                                 validation_data=(X_val, y_val), callbacks=[checkpoint, early_stopping], verbose=1)
+
+            model.save(checkpoint_path)
 
             loss, mae, mse, rmse = model.evaluate(X_test, y_test)
 

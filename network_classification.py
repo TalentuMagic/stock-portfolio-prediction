@@ -315,6 +315,8 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
             history = model.fit(X_train, y_train, epochs=100, batch_size=64,
                                 validation_data=(X_val, y_val), callbacks=[checkpoint, early_stopping], verbose=1)
 
+            model.save(checkpoint_path)
+
             loss, accuracy = model.evaluate(X_test, y_test)
 
             # Print the evaluation results
