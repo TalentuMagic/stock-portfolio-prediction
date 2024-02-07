@@ -1,21 +1,21 @@
 {
     "Classification": {
-        "Validation Loss": 0.8929976224899292,
-        "Validation Accuracy": 0.953125,
+        "Validation Loss": 0.49106842279434204,
+        "Validation Accuracy": 0.88671875,
         "Confusion Matrix": {
-            "True Negatives": 120,
-            "False Negatives": 20,
-            "True Positives": 115,
-            "False Positives": 1
+            "True Negatives": 91,
+            "False Negatives": 0,
+            "True Positives": 136,
+            "False Positives": 29
         },
-        "Most Occuring Prediction": 0
+        "Most Occuring Prediction": 1
     },
     "Regression": {
-        "Validation Loss": 0.42578545212745667,
-        "Validation Mean Squared Error (MSE)": 0.3345755636692047,
-        "Validation Mean Absolute Error (MAE)": 0.47139811515808105,
-        "Validation Root Mean Sqared Error (RMSE)": 0.5784250497817993,
-        "Most Occurring Prediction": 0.64501953125
+        "Validation Loss": 0.029558593407273293,
+        "Validation Mean Squared Error (MSE)": 0.0013251418713480234,
+        "Validation Mean Absolute Error (MAE)": 0.03296324610710144,
+        "Validation Root Mean Sqared Error (RMSE)": 0.03640249744057655,
+        "Most Occurring Prediction": 0.4769415855407715
     },
-    "Both Models Agree": false
+    "Both Models Agree": true
 }
