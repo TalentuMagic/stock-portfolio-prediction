@@ -82,7 +82,7 @@ def read_datasets(user_choice: int = None, price_history: str = None, metrics: s
                     elif price_history == 'y' or price_history == 'Y':
                         ok = True
                     analysePies.getPieData_EurozoneInvestments(ok=ok)
-                    folder_path = './eurozone/'
+                    folder_path = r'./eurozone/'
                     files = [folder_path+f for f in os.listdir(folder_path) if os.path.isfile(
                         os.path.join(folder_path, f))]
 
@@ -101,7 +101,7 @@ def read_datasets(user_choice: int = None, price_history: str = None, metrics: s
                     elif price_history == 'y' or price_history == 'Y':
                         ok = True
                     analysePies.getPieData_OwnTheWorldIn50(ok=ok)
-                    folder_path = './otw/'
+                    folder_path = r'./otw/'
                     files = [folder_path+f for f in os.listdir(folder_path) if os.path.isfile(
                         os.path.join(folder_path, f))]
 
@@ -120,7 +120,7 @@ def read_datasets(user_choice: int = None, price_history: str = None, metrics: s
                     elif price_history == 'y' or price_history == 'Y':
                         ok = True
                     analysePies.getPieData_ETFs(ok=ok)
-                    folder_path = './etfs/'
+                    folder_path = r'./etfs/'
                     files = [folder_path+f for f in os.listdir(folder_path) if os.path.isfile(
                         os.path.join(folder_path, f))]
 
@@ -139,7 +139,7 @@ def read_datasets(user_choice: int = None, price_history: str = None, metrics: s
                     elif price_history == 'y' or price_history == 'Y':
                         ok = True
                     analysePies.getPieData_Crypto(ok=ok)
-                    folder_path = './crypto/'
+                    folder_path = r'./crypto/'
                     files = [folder_path+f for f in os.listdir(folder_path) if os.path.isfile(
                         os.path.join(folder_path, f))]
 
@@ -163,7 +163,7 @@ def read_datasets(user_choice: int = None, price_history: str = None, metrics: s
                     elif price_history == 'y' or price_history == 'Y':
                         ok = True
                     analysePies.getPieData_EurozoneInvestments(ok=ok)
-                    folder_path = './eurozone/'
+                    folder_path = r'./eurozone/'
                     files = [folder_path+f for f in os.listdir(folder_path) if os.path.isfile(
                         os.path.join(folder_path, f))]
 
@@ -178,7 +178,7 @@ def read_datasets(user_choice: int = None, price_history: str = None, metrics: s
                     elif price_history == 'y' or price_history == 'Y':
                         ok = True
                     analysePies.getPieData_OwnTheWorldIn50(ok=ok)
-                    folder_path = './otw/'
+                    folder_path = r'./otw/'
                     files = [folder_path+f for f in os.listdir(folder_path) if os.path.isfile(
                         os.path.join(folder_path, f))]
 
@@ -193,7 +193,7 @@ def read_datasets(user_choice: int = None, price_history: str = None, metrics: s
                     elif price_history == 'y' or price_history == 'Y':
                         ok = True
                     analysePies.getPieData_ETFs(ok=ok)
-                    folder_path = './etfs/'
+                    folder_path = r'./etfs/'
                     files = [folder_path+f for f in os.listdir(folder_path) if os.path.isfile(
                         os.path.join(folder_path, f))]
 
@@ -208,7 +208,7 @@ def read_datasets(user_choice: int = None, price_history: str = None, metrics: s
                     elif price_history == 'y' or price_history == 'Y':
                         ok = True
                     analysePies.getPieData_Crypto(ok=ok)
-                    folder_path = './crypto/'
+                    folder_path = r'./crypto/'
                     files = [folder_path+f for f in os.listdir(folder_path) if os.path.isfile(
                         os.path.join(folder_path, f))]
 
@@ -234,7 +234,7 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
             scaler = MinMaxScaler(feature_range=(0, 1))
 
             # Load the dataset
-            df = pd.read_csv(f'./{files[index]}', index_col='Date')
+            df = pd.read_csv(fr'./{files[index]}', index_col='Date')
             df = df.drop(['Volume', 'Close'], axis=1)
             df_columns, df_indexes = df.columns, df.index
 
