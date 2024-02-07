@@ -13,6 +13,7 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 from tensorflow.keras import regularizers, mixed_precision
 from tensorflow.keras.metrics import RootMeanSquaredError
+from sklearn.preprocessing import RobustScaler
 import os
 import analysePies
 
@@ -219,19 +220,27 @@ def read_datasets(user_choice: int = None, price_history: str = None, metrics: s
                 case _:
                     print("Invalid choice. Try again...\n")
                     continue
-    return files
+    return files, ok
 
 
 def main(user_choice: int = None, price_history: str = None, metrics: str = None):
-    files = read_datasets(user_choice, price_history, metrics)
+    files, ok = read_datasets(user_choice, price_history, metrics)
 
     index = 0
     while index < len(files):
         try:
             print(files[index])
+
+            scaler = RobustScaler()
+
             # Load the dataset
             df = pd.read_csv(f'./{files[index]}', index_col='Date')
             df = df.drop(['Volume', 'Close'], axis=1)
+            df_columns, df_indexes = df.columns, df.index
+
+            # Scale the data and pass it as the same DataFrame as before scaling
+            df = pd.DataFrame(scaler.fit_transform(
+                df), columns=df_columns, index=df_indexes)
 
             X = df.iloc[:, :-1].astype('float16')
             y = df.iloc[:, -2].astype('float16')
@@ -292,7 +301,7 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
             print(model.dtype_policy)
             # Input layer
             model.add(LSTM(512, input_shape=(
-                1, X_train.shape[2]), return_sequences=True, kernel_regularizer='l1_l2', recurrent_dropout=0.15))
+                1, X_train.shape[2]), return_sequences=True, kernel_regularizer='l1_l2'))
             model.add(BatchNormalization())
             model.add(Dropout(0.15))
 
@@ -309,10 +318,18 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
 
             loss, mae, mse, rmse = model.evaluate(X_test, y_test)
 
-            time.sleep(1.5)
+            time.sleep(1)
             # Make predictions on the test set
-            y_test_predictions = np.array(model.predict(
-                X_test).astype('float32')).reshape(-1)
+            y_test_predictions_scaled = np.array(model.predict(
+                X_test).astype('float32')).reshape(-1, 1)
+
+            # fit an output scaler with the test data
+            scaler_y = RobustScaler()
+            scaler_y.fit(y_train.to_numpy().reshape(-1, 1))
+
+            # inverse transform from the fitted scaler to get the original data predictions
+            y_test_predictions = scaler_y.inverse_transform(
+                y_test_predictions_scaled).squeeze()
 
             # Print the evaluation results
             print("\nValidation Loss:", loss)
@@ -323,10 +340,7 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
             # Plot actual vs. predicted values
             print("\nMost Occurring Prediction:", mode(y_test_predictions))
             # Count occurrences within the threshold
-            if np.abs(mse) + np.abs(mae) + np.abs(loss) - rmse + (rmse*0.25) <= rmse*0.25:
-                threshold = np.abs(mse) + np.abs(mae) + np.abs(loss)
-            else:
-                threshold = np.abs(rmse) + np.abs(rmse*0.25)
+            threshold = (np.abs(mse) + np.abs(mae) + np.abs(loss)) * 5
 
             close_enough_count = np.sum(
                 (np.abs(y_test) - np.abs(y_test_predictions)) <= threshold)
@@ -347,11 +361,11 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
 
             del model
 
-            print("\nWaiting 5 seconds between trainings...\n")
+            print("\nWaiting 1 second(s) between trainings...\n")
             index += 1
 
             if index != len(files):
-                time.sleep(5)
+                time.sleep(1)
         except Exception as e:
             print("An error occured:", e, '\nRetrying...\n')
             continue

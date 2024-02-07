@@ -7,6 +7,7 @@ import numpy as np
 import seaborn
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
 from keras.models import Sequential
 from keras.layers import Dense, LSTM, Dropout, BatchNormalization
 from keras.optimizers import Adam
@@ -218,22 +219,30 @@ def read_datasets(user_choice: int = None, price_history: str = None, metrics: s
                 case _:
                     print("Invalid choice. Try again...\n")
                     continue
-    return files
+    return files, ok
 
 
 def main(user_choice: int = None, price_history: str = None, metrics: str = None):
-    files = read_datasets(user_choice, price_history, metrics)
+    files, ok = read_datasets(user_choice, price_history, metrics)
 
     index = 0
     while index < len(files):
         try:
             print(files[index])
+
+            scaler = MinMaxScaler(feature_range=(0, 1))
+
             # Load the dataset
             df = pd.read_csv(f'./{files[index]}', index_col='Date')
             df = df.drop(['Volume', 'Close'], axis=1)
+            df_columns, df_indexes = df.columns, df.index
+
+            # Scale the data and pass it as the same DataFrame as before scaling
+            df = pd.DataFrame(scaler.fit_transform(
+                df), columns=df_columns, index=df_indexes)
 
             X = df.iloc[:, :-1].astype('float16')
-            y = df.iloc[:, -1]
+            y = df.iloc[:, -1].astype('float16')
 
             # select the past year for validation data
             X.index = pd.to_datetime(X.index)
@@ -311,13 +320,22 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
             print("Validation Loss:", loss)
             print("Validation Accuracy:", accuracy)
 
-            time.sleep(1.5)
-            y_test_predictions = model.predict(
-                X_test).squeeze().astype('float32')
+            time.sleep(1)
+            y_test_predictions_scaled = np.array(model.predict(
+                X_test).astype('float32')).reshape(-1, 1)
+
+            print(y_test)
+
+            # fit an output scaler with the test data
+            scaler_y = MinMaxScaler(feature_range=(0, 1))
+            scaler_y.fit(y_train.to_numpy().reshape(-1, 1))
+
+            y_test_predictions = scaler_y.inverse_transform(
+                y_test_predictions_scaled).squeeze()
 
             # Convert probabilities to binary predictions (0 or 1)
-            y_test_predictions_binary = (
-                y_test_predictions >= 0.6).astype(int).squeeze()
+            y_test_predictions_binary = [
+                1 if prediction > 0.6 else 0 for prediction in y_test_predictions]
 
             print("\nMost Occurring Prediction:",
                   mode(y_test_predictions_binary))
@@ -337,11 +355,11 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
 
             del model
 
-            print("Waiting 5 seconds between trainings...\n")
+            print("Waiting 1 second(s) between trainings...\n")
             index += 1
 
             if index != len(files):
-                time.sleep(5)
+                time.sleep(1)
         except Exception as e:
             print("An error occured:", e, '\nRetrying...\n')
             continue
