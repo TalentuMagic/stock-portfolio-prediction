@@ -19,3 +19,7 @@ def main():
     build_models_classification(1, 'n', 'n')
     build_models_regression(1, 'n', 'n')
     compare_models(1, 'n', 'n')
+
+
+if __name__ == "__main__":
+    main()
