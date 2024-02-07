@@ -29,6 +29,7 @@ def plotModelPerformance(model, X_test, y_test, history, y_test_predictions, los
     plt.plot(history.history['val_loss'],
              label='val_loss', linestyle="dashed", color='red')
     plt.legend()
+    plt.grid()
     plt.show()
 
     # Plot actual vs predicted values
@@ -41,6 +42,7 @@ def plotModelPerformance(model, X_test, y_test, history, y_test_predictions, los
     plt.ylabel('Values')
     plt.title('Actual vs. Predicted Values on Validation Set')
     plt.legend()
+    plt.grid()
     plt.show()
 
     # Plot histogram of predicted probabilities
@@ -49,6 +51,7 @@ def plotModelPerformance(model, X_test, y_test, history, y_test_predictions, los
     plt.xlabel('Predicted Probabilities')
     plt.ylabel('Frequency')
     plt.title('Histogram of Predicted Probabilities on Validation Set')
+    plt.grid()
     plt.show()
 
     # Flatten the probabilities
@@ -61,6 +64,7 @@ def plotModelPerformance(model, X_test, y_test, history, y_test_predictions, los
     plt.title('Distribution of Predicted Probabilities on Validation Set')
     plt.xlabel('Predicted Probabilities')
     plt.ylabel('Density')
+    plt.grid()
     plt.show()
 
 
@@ -335,7 +339,7 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
 
             # Convert probabilities to binary predictions (0 or 1)
             y_test_predictions_binary = [
-                1 if prediction > 0.6 else 0 for prediction in y_test_predictions]
+                1 if prediction > 0.5 else 0 for prediction in y_test_predictions]
 
             print("\nMost Occurring Prediction:",
                   mode(y_test_predictions_binary))
@@ -351,7 +355,7 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
 
             if ok:
                 plotModelPerformance(model, X_test, y_test,
-                                     history, y_test_predictions, loss, accuracy)
+                                     history, y_test_predictions_binary, loss, accuracy)
 
             del model
 

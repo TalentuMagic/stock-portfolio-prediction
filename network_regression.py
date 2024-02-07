@@ -23,9 +23,12 @@ start = datetime.now()
 
 
 def plotModelPerformance(model, X_test, y_test, history, y_test_predictions, loss, mse, mae, rmse):
-    plt.plot(history.history['loss'], label='train_loss')
-    plt.plot(history.history['val_loss'], label='val_loss')
-    plt.grid()
+    plt.plot(history.history['accuracy'],
+             label='train_accuracy', linestyle='dashdot')
+    plt.plot(history.history['val_accuracy'],
+             label='val_accuracy', color='green')
+    plt.plot(history.history['val_loss'],
+             label='val_loss', linestyle="dashed", color='red')
     plt.legend()
     plt.show()
 
