@@ -1,0 +1,21 @@
+{
+    "Classification": {
+        "Validation Loss": 0.8929976224899292,
+        "Validation Accuracy": 0.953125,
+        "Confusion Matrix": {
+            "True Negatives": 120,
+            "False Negatives": 20,
+            "True Positives": 115,
+            "False Positives": 1
+        },
+        "Most Occuring Prediction": 0
+    },
+    "Regression": {
+        "Validation Loss": 0.42578545212745667,
+        "Validation Mean Squared Error (MSE)": 0.3345755636692047,
+        "Validation Mean Absolute Error (MAE)": 0.47139811515808105,
+        "Validation Root Mean Sqared Error (RMSE)": 0.5784250497817993,
+        "Most Occurring Prediction": 0.64501953125
+    },
+    "Both Models Agree": false
+}
