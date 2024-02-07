@@ -328,8 +328,6 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
             y_test_predictions_scaled = np.array(model.predict(
                 X_test).astype('float32')).reshape(-1, 1)
 
-            print(y_test)
-
             # fit an output scaler with the test data
             scaler_y = MinMaxScaler(feature_range=(0, 1))
             scaler_y.fit(y_train.to_numpy().reshape(-1, 1))
