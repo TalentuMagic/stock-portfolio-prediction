@@ -1,6 +1,7 @@
 # stock-portfolio-prediction
 ## Author: David-Ioan STANESCU-FLOREA
 LSTM Prediction Neural Network for my Investment pies
+ - Will further provide documentation and research on the project
 
 ## The Data
  - It uses stock pies' that I personally have investments in whole historical data from Yahoo Finance API. It computes the price indicators: RSI, SMA (Simple Moving Average), EMA (Exponential Moving Average) and adds them to the dataset(s).
