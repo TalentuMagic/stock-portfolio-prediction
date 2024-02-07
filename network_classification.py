@@ -54,12 +54,9 @@ def plotModelPerformance(model, X_test, y_test, history, y_test_predictions, los
     plt.grid()
     plt.show()
 
-    # Flatten the probabilities
-    flat_probabilities = y_test_predictions.flatten()
-
     # Plot the distribution of predicted probabilities
     plt.figure(figsize=(10, 6))
-    seaborn.histplot(flat_probabilities, bins=30, kde=True,
+    seaborn.histplot(y_test_predictions, bins=30, kde=True,
                      color='blue', stat='density')
     plt.title('Distribution of Predicted Probabilities on Validation Set')
     plt.xlabel('Predicted Probabilities')
