@@ -1,4 +1,5 @@
 # stock-portfolio-prediction
+## Author: David-Ioan STANESCU-FLOREA
 LSTM Prediction Neural Network for my Investment pies
 
 ## The Data
