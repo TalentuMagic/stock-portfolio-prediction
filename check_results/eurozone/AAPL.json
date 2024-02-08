@@ -1,1 +1,21 @@
-{"Classification": {"Validation Loss": 0.20681601762771606, "Validation Accuracy": 0.9801587462425232, "Confusion Matrix": {"True Negatives": 117, "False Negatives": 4, "True Positives": 130, "False Positives": 1}, "Most Occuring Prediction": 1}, "Regression": {"Validation Loss": 5.257173538208008, "Validation Mean Squared Error (MSE)": 73.43215942382812, "Validation Mean Absolute Error (MAE)": 5.555757999420166, "Validation Root Mean Sqared Error (RMSE)": 8.569256782531738, "Most Occurring Prediction": 6363.9150390625}, "Both Models Agree": true}
+{
+    "Classification": {
+        "Validation Loss": 0.20681601762771606,
+        "Validation Accuracy": 0.9801587462425232,
+        "Confusion Matrix": {
+            "True Negatives": 117,
+            "False Negatives": 4,
+            "True Positives": 130,
+            "False Positives": 1
+        },
+        "Most Occuring Prediction": 1
+    },
+    "Regression": {
+        "Validation Loss": 5.257173538208008,
+        "Validation Mean Squared Error (MSE)": 73.43215942382812,
+        "Validation Mean Absolute Error (MAE)": 5.555757999420166,
+        "Validation Root Mean Sqared Error (RMSE)": 8.569256782531738,
+        "Most Occurring Prediction": 6363.9150390625
+    },
+    "Both Models Agree": true
+}
