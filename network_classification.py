@@ -7,7 +7,7 @@ import numpy as np
 import seaborn
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler, StandardScaler
+from sklearn.preprocessing import StandardScaler
 from keras.models import Sequential
 from keras.layers import Dense, LSTM, Dropout, BatchNormalization
 from keras.optimizers import Adam

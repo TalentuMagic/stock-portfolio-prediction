@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler, RobustScaler
+from sklearn.preprocessing import StandardScaler, RobustScaler
 import analysePies
 import json
 from keras import models, mixed_precision
@@ -179,7 +179,7 @@ def preprocessData_Classification(files: list() = None, index: int = None):
         df = df.drop(['Volume', 'Close'], axis=1)
         df_columns, df_indexes = df.columns, df.index
 
-        scaler = MinMaxScaler(feature_range=(0, 1))
+        scaler = StandardScaler(with_mean=False, with_std=False)
 
         # Scale the data and pass it as the same DataFrame as before scaling
         df = pd.DataFrame(scaler.fit_transform(
@@ -231,7 +231,7 @@ def preprocessData_Classification(files: list() = None, index: int = None):
             X_test).astype('float32')).reshape(-1, 1)
 
         # fit an output scaler with the test data
-        scaler_y = MinMaxScaler(feature_range=(0, 1))
+        scaler_y = StandardScaler(with_mean=False, with_std=False)
         scaler_y.fit(y_test.to_numpy().reshape(-1, 1))
 
         y_test_predictions = scaler_y.inverse_transform(
