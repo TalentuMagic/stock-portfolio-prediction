@@ -7,7 +7,7 @@ import numpy as np
 import seaborn
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler, StandardScaler
 from keras.models import Sequential
 from keras.layers import Dense, LSTM, Dropout, BatchNormalization
 from keras.optimizers import Adam
@@ -231,7 +231,7 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
         try:
             print(files[index])
 
-            scaler = MinMaxScaler(feature_range=(0, 1))
+            scaler = StandardScaler(with_mean=False, with_std=False)
 
             # Load the dataset
             df = pd.read_csv(fr'./{files[index]}', index_col='Date')
@@ -328,7 +328,7 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
                 X_test).astype('float32')).reshape(-1, 1)
 
             # fit an output scaler with the test data
-            scaler_y = MinMaxScaler(feature_range=(0, 1))
+            scaler_y = StandardScaler(with_mean=False, with_std=False)
             scaler_y.fit(y_train.to_numpy().reshape(-1, 1))
 
             y_test_predictions = scaler_y.inverse_transform(
