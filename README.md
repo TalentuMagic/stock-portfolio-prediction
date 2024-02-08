@@ -12,6 +12,7 @@ LSTM Prediction Neural Network for my Investment pies
  - The network is based on the LSTM (Long Short Term Memory) neural network  model.
  - For each stock in the pie, it creates an unique model.
  - The model must solve a binary classification problem.
+ - The model must solve a regression problem
 
 ### Input & Output Data
  - The input data for training consists of the whole history of data of a specific stock, except the *Volume* column, until one year before the current date.
