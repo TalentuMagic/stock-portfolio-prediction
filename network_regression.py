@@ -342,7 +342,10 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
             print("Validation Root Mean Sqared Error (RMSE):", rmse)
 
             # Plot actual vs. predicted values
-            print("\nMost Occurring Prediction:", mode(y_test_predictions))
+            print("\nLast Year's Performance:",
+                  mode(y_test_predictions))
+            print("\nPrice Increase/Decrease Tomorrow:",
+                  y_test_predictions[-1])
             # Count occurrences within the threshold
             threshold = (np.abs(mse) + np.abs(mae) + np.abs(loss)) * 5
 

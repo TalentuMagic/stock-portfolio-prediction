@@ -241,8 +241,10 @@ def preprocessData_Classification(files: list() = None, index: int = None):
         y_test_predictions_binary = [
             1 if prediction > 0.5 else 0 for prediction in y_test_predictions]
 
-        print("\nMost Occurring Prediction:",
+        print("\nLast Year's Performance:",
               mode(y_test_predictions_binary))
+        print("Price Increase/Decrease Tomorrow:",
+              y_test_predictions_binary[-1], '\n')
 
         # Create confusion matrix
         cm = confusion_matrix(y_test, y_test_predictions_binary)
@@ -256,7 +258,7 @@ def preprocessData_Classification(files: list() = None, index: int = None):
         cm_values['False Positives'] = cm[0][1].tolist()
         classification['Confusion Matrix'] = cm_values
 
-        classification['Most Occuring Prediction on the Last Year'] = mode(
+        classification["Last Year's Performance"] = mode(
             y_test_predictions_binary)
         classification['Price Increase/Decrease Tomorrow'] = y_test_predictions_binary[-1]
         # Classification Report
@@ -346,12 +348,14 @@ def preprocessData_Regression(files: list() = None, index: int = None):
         y_test_predictions = scaler_y.inverse_transform(
             y_test_predictions_scaled).squeeze()
         # Plot actual vs. predicted values
-        print("\nMost Occurring Prediction:", mode(
-            y_test_predictions))
+        print("\nLast Year's Performance:",
+              mode(y_test_predictions))
+        print("Price Increase/Decrease Tomorrow:",
+              y_test_predictions[-1], '\n')
 
-        regression['Most Occurring Prediction on the Last Year'] = mode(
+        regression["Last Year's Performance"] = mode(
             y_test_predictions).tolist()
-        regression['Price Tomorrow'] = y_test_predictions[-1]
+        regression['Price Tomorrow'] = y_test_predictions[-1].tolist()
         # Count occurrences within the threshold
         if np.abs(mse) + np.abs(mae) + np.abs(loss_r) - rmse + (rmse*0.25) <= rmse*0.25:
             threshold = np.abs(mse) + np.abs(mae) + np.abs(loss_r)
@@ -389,14 +393,19 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
         regression = preprocessData_Regression(files, index)
         print("- Prediction on the Last Year -")
         print("\nClassification <-> Regression")
-        print(classification['Most Occuring Prediction on the Last Year'],
-              '<->', regression['Most Occurring Prediction on the Last Year'], '\n\n')
+        print(classification["Last Year's Performance"],
+              '<->', regression["Last Year's Performance"], '\n\n')
+
+        print("- Prediction on Tomorrow -")
+        print("\nClassification <-> Regression")
+        print(classification['Price Increase/Decrease Tomorrow'],
+              '<->', regression['Price Tomorrow'], '\n\n')
 
         results['Classification'] = classification
         results['Regression'] = regression
-        if classification['Most Occuring Prediction on the Last Year'] == 1 and regression['Most Occurring Prediction on the Last Year'] > 0:
+        if classification["Last Year's Performance"] == 1 and regression["Last Year's Performance"] > 0:
             results['Both Models Agree on Last Year'] = True
-        elif classification['Most Occuring Prediction on the Last Year'] == 0 and regression['Most Occurring Prediction on the Last Year'] < 0:
+        elif classification["Last Year's Performance"] == 0 and regression["Last Year's Performance"] < 0:
             results['Both Models Agree on Last Year'] = True
         else:
             results['Both Models Agree on Last Year'] = False
