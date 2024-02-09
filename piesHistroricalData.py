@@ -26,7 +26,7 @@ class OwnTheWorldIn50:
 class ETFs:
     def __init__(self):
         self.holdings = ['QDVE.DE', 'SXRV.DE',
-                         'SXR8.DE', 'EUNL.DE', 'VWCE.DE', '2B76.DE']
+                         'SXR8.DE', 'EUNL.DE', 'VWCE.DE', '2B76.DE', 'XDWH.DE', 'XDWT.DE']
         print(
             f"<INFO> Fetching pie holdings historical data for {self.holdings}")
         self.pieData = getPieData(holdings=self.holdings)
@@ -35,7 +35,7 @@ class ETFs:
 class EurozoneInvestments:
     def __init__(self):
         self.holdings = ['AAPL', 'MSFT', 'GOOGL',
-                         'NVDA', 'META', 'MA', 'ADBE', 'NFLX', 'AMD', 'V', 'QCOM', 'INGA.AS', 'INTC', 'RMS.PA', 'OMV.DE', 'MBG.DE', 'BMW.DE', 'DBK.DE', 'AIR.PA', 'OR.PA', 'BA', 'F', 'ADS.DE', 'VOD.L', 'ORA.PA', 'DTE.DE', 'GLE.PA', 'PUM.DE', 'NKE', 'BAYN.DE', 'PM', 'BTI']
+                         'NVDA', 'META', 'MA', 'ADBE', 'NFLX', 'AMD', 'V', 'QCOM', 'INGA.AS', 'INTC', 'RMS.PA', 'OMV.DE', 'MBG.DE', 'BMW.DE', 'DBK.DE', 'AIR.PA', 'OR.PA', 'BA', 'F', 'ADS.DE', 'VOD.L', 'ORA.PA', 'DTE.DE', 'GLE.PA', 'PUM.DE', 'NKE', 'BAYN.DE', 'PM', 'BTI', 'SIE.DE', 'SHL.DE', 'ENR.DE', 'HON', 'ENEL.MI', 'ENGI.PA', 'ZAL.DE', 'CA.PA', 'B4B.DE', 'UNA.AS', 'PG', 'MCD', 'KO', 'PEP', 'HEIA.AS', 'SAP.DE', 'ABBN.SW', 'UBER', 'ABNB', 'BKNG', 'CAP.PA']
         print(
             f"<INFO> Fetching pie holdings historical data for {self.holdings}")
         self.pieData = getPieData(holdings=self.holdings)
