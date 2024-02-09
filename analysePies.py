@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 def dataSetup(pieData: list = None):
     for index, stock_data in enumerate(pieData):
         stock_data['RSI'] = computeRSI(stock_data=stock_data)
+        stock_data['ATR'] = computeATR(stock_data=stock_data)
         stock_data['SMA_50'] = stock_data['Adj Close'].rolling(
             window=50).mean()
         stock_data['EMA_50'] = stock_data['Adj Close'].ewm(
@@ -19,8 +20,8 @@ def dataSetup(pieData: list = None):
         stock_data['LowerBand'] = stock_data['SMA_20'] - \
             2 * stock_data['Adj Close'].rolling(window=20).std()
         stock_data['Tomorrow'] = stock_data['Adj Close'].shift(-1)
-        stock_data['Target'] = stock_data['Adj Close'].shift(
-            -1) - stock_data['Adj Close']
+        stock_data['Target'] = np.log(stock_data['Adj Close'].shift(
+            -1)) - np.log(stock_data['Adj Close'])
         stock_data['TargetClass'] = (
             stock_data['Tomorrow'] > stock_data['Adj Close']).astype(int)
 
@@ -29,7 +30,7 @@ def dataSetup(pieData: list = None):
     return pieData
 
 
-def computeRSI(stock_data):
+def computeRSI(stock_data: pd.DataFrame):
     change = stock_data["Adj Close"].diff()
     # Create two copies of the Closing price Series
     change_up = change.copy()
@@ -48,6 +49,19 @@ def computeRSI(stock_data):
 
     rsi = 100 * avg_up / (avg_up + avg_down)
     return rsi
+
+
+def computeATR(stock_data: pd.DataFrame, period: int = 14):
+    """Compute the Average True Range (ATR) of a stock."""
+    high_low = stock_data['High'] - stock_data['Low']
+    high_close = (stock_data['High'] - stock_data['Close'].shift()).abs()
+    low_close = (stock_data['Low'] - stock_data['Close'].shift()).abs()
+
+    ranges = pd.concat([high_low, high_close, low_close], axis=1)
+    true_range = ranges.max(axis=1)
+    atr = true_range.rolling(window=period).mean()
+
+    return atr
 
 
 def plotPriceHistory(pieClass, pieData):
@@ -104,7 +118,27 @@ def plotPriceHistory(pieClass, pieData):
             axes_price_rsi[index].legend()
             axes_rsi.legend(loc='upper right')
             axes_price_rsi[index].grid()
+
         plt.suptitle("Stock/ETF Price History")
+        plt.xlabel("Date")
+        plt.tight_layout()
+        plt.show()
+
+        fig, axes_price_atr = plt.subplots(
+            nrows=current_rows, ncols=1, sharex=True)
+        for index in range(current_rows):
+            # Check if axes is not an array for pies with a only one remaining
+            if not isinstance(axes_price_rsi, np.ndarray):
+                axes_price_rsi = [axes_price_rsi]
+
+            stock = pieData[index + iter]
+            axes_price_atr[index].plot(
+                stock.index, stock['ATR'], label='ATR (14 days)')
+            axes_rsi.set_xlabel('Date')
+            axes_rsi.set_ylabel('ATR')
+            axes_price_atr[index].grid()
+            axes_price_atr[index].legend()
+        plt.suptitle(f"ATR for Stocks/ETFs")
         plt.xlabel("Date")
         plt.tight_layout()
         plt.show()
