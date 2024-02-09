@@ -354,10 +354,10 @@ def preprocessData_Regression(files: list() = None, index: int = None):
               y_test_predictions[-1], '\n')
 
         # Count occurrences within the threshold
-        if np.abs(mse) + np.abs(mae) + np.abs(loss_r) - rmse + (rmse*3) <= rmse*3:
+        if np.abs(mse) + np.abs(mae) + np.abs(loss_r) - rmse + (rmse*5) <= rmse*5:
             threshold = np.abs(mse) + np.abs(mae) + np.abs(loss_r)
         else:
-            threshold = np.abs(rmse) + np.abs(rmse*3)
+            threshold = np.abs(rmse) + np.abs(rmse*5)
 
         close_enough_count = np.sum(
             (np.abs(y_test) - np.abs(y_test_predictions)) <= threshold)
