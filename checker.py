@@ -256,8 +256,9 @@ def preprocessData_Classification(files: list() = None, index: int = None):
         cm_values['False Positives'] = cm[0][1].tolist()
         classification['Confusion Matrix'] = cm_values
 
-        classification['Most Occuring Prediction'] = mode(
+        classification['Most Occuring Prediction on the Last Year'] = mode(
             y_test_predictions_binary)
+        classification['Price Increase/Decrease Tomorrow'] = y_test_predictions_binary[-1]
         # Classification Report
         print("Classification Report:")
         print(classification_report(y_test, y_test_predictions_binary))
@@ -348,8 +349,9 @@ def preprocessData_Regression(files: list() = None, index: int = None):
         print("\nMost Occurring Prediction:", mode(
             y_test_predictions))
 
-        regression['Most Occurring Prediction'] = mode(
+        regression['Most Occurring Prediction on the Last Year'] = mode(
             y_test_predictions).tolist()
+        regression['Price Tomorrow'] = y_test_predictions[-1]
         # Count occurrences within the threshold
         if np.abs(mse) + np.abs(mae) + np.abs(loss_r) - rmse + (rmse*0.25) <= rmse*0.25:
             threshold = np.abs(mse) + np.abs(mae) + np.abs(loss_r)
