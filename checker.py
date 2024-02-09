@@ -353,9 +353,6 @@ def preprocessData_Regression(files: list() = None, index: int = None):
         print("Price Increase/Decrease Tomorrow:",
               y_test_predictions[-1], '\n')
 
-        regression["Last Year's Performance"] = mode(
-            y_test_predictions).tolist()
-        regression['Price Tomorrow'] = y_test_predictions[-1].tolist()
         # Count occurrences within the threshold
         if np.abs(mse) + np.abs(mae) + np.abs(loss_r) - rmse + (rmse*0.25) <= rmse*0.25:
             threshold = np.abs(mse) + np.abs(mae) + np.abs(loss_r)
@@ -376,6 +373,16 @@ def preprocessData_Regression(files: list() = None, index: int = None):
             f"Mean of close enough (to actual value): {mean_close_enough}")
 
         print("\n------------------------\n")
+
+        regression['Threshold'] = threshold
+        regression["No. Predictions Close Enough to Threshold"] = close_enough_count / \
+            len(y_test)
+        regression["No. Predictions Close Enough Percentage"] = close_enough_percentage
+        regression['Yearly Price Mean of Close Enough Values'] = mean_close_enough
+
+        regression["Last Year's Performance"] = mode(
+            y_test_predictions).tolist()
+        regression['Price Tomorrow'] = y_test_predictions[-1].tolist()
 
         index += 1
     except Exception as e:
