@@ -387,18 +387,26 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
     while index < len(files):
         classification = preprocessData_Classification(files, index)
         regression = preprocessData_Regression(files, index)
+        print("- Prediction on the Last Year -")
         print("\nClassification <-> Regression")
-        print(classification['Most Occuring Prediction'],
-              '<->', regression['Most Occurring Prediction'], '\n\n')
+        print(classification['Most Occuring Prediction on the Last Year'],
+              '<->', regression['Most Occurring Prediction on the Last Year'], '\n\n')
 
         results['Classification'] = classification
         results['Regression'] = regression
-        if classification['Most Occuring Prediction'] == 1 and regression['Most Occurring Prediction'] > 0:
-            results['Both Models Agree'] = True
-        elif classification['Most Occuring Prediction'] == 0 and regression['Most Occurring Prediction'] < 0:
-            results['Both Models Agree'] = True
+        if classification['Most Occuring Prediction on the Last Year'] == 1 and regression['Most Occurring Prediction on the Last Year'] > 0:
+            results['Both Models Agree on Last Year'] = True
+        elif classification['Most Occuring Prediction on the Last Year'] == 0 and regression['Most Occurring Prediction on the Last Year'] < 0:
+            results['Both Models Agree on Last Year'] = True
         else:
-            results['Both Models Agree'] = False
+            results['Both Models Agree on Last Year'] = False
+
+        if classification['Price Increase/Decrease Tomorrow'] == 1 and regression['Price Tomorrow'] > 0:
+            results['Both Models Agree on Price Tomorrow'] = True
+        elif classification['Price Increase/Decrease Tomorrow'] == 0 and regression['Price Tomorrow'] < 0:
+            results['Both Models Agree on Price Tomorrow'] = True
+        else:
+            results['Both Models Agree on Price Tomorrow'] = False
 
         filename = files[index][2:-4].split(".")
         if len(filename) > 1:
