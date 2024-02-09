@@ -342,7 +342,7 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
             # Plot actual vs. predicted values
             print("\nLast Year's Performance:",
                   mode(y_test_predictions))
-            print("\nPrice Increase/Decrease Tomorrow:",
+            print("Price Increase/Decrease Tomorrow:",
                   y_test_predictions[-1])
             # Count occurrences within the threshold
             if np.abs(mse) + np.abs(mae) + np.abs(loss) - (rmse * 5) <= rmse * 5:
@@ -374,6 +374,9 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
 
             if index != len(files):
                 time.sleep(1)
+
+            if index == 6:
+                break
 
         except Exception as e:
             print("An error occured:", e, '\nRetrying...\n')
