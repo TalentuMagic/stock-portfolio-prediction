@@ -8,6 +8,11 @@ def dataSetup(pieData: list = None):
     for index, stock_data in enumerate(pieData):
         stock_data['RSI'] = computeRSI(stock_data=stock_data)
         stock_data['ATR'] = computeATR(stock_data=stock_data)
+        stock_data['WMA'] = computeWMA(stock_data['Adj Close'], 14)
+        stock_data['MACD'], stock_data['Signal'] = computeMACD(
+            stock_data['Adj Close'], 12, 26)
+        stock_data['Stochastic Oscillator'] = computeStochasticOscillator(
+            stock_data['Adj Close'], stock_data['High'], stock_data['Low'], 14)
         stock_data['SMA_50'] = stock_data['Adj Close'].rolling(
             window=50).mean()
         stock_data['EMA_50'] = stock_data['Adj Close'].ewm(
@@ -66,12 +71,31 @@ def computeATR(stock_data: pd.DataFrame, period: int = 14):
     return atr
 
 
+def computeWMA(data, period):
+    weights = np.arange(period, 0, -1)
+    return data.rolling(period).apply(lambda x: np.dot(x, weights)/weights.sum(), raw=True)
+
+
+def computeMACD(data, short_period, long_period):
+    short_EMA = data.ewm(span=short_period, adjust=False).mean()
+    long_EMA = data.ewm(span=long_period, adjust=False).mean()
+    MACD_line = short_EMA - long_EMA
+    signal_line = MACD_line.ewm(span=9, adjust=False).mean()
+    return MACD_line, signal_line
+
+
+def computeStochasticOscillator(data, high, low, period):
+    highest_high = high.rolling(period).max()
+    lowest_low = low.rolling(period).min()
+    return 100 * (data - lowest_low) / (highest_high - lowest_low)
+
+
 def plotPriceHistory(pieClass, pieData):
     """Plot the history of the pie for each stock/ETF"""
 
     total_rows = len(pieData)
-    for iter in range(0, total_rows, 4):
-        current_rows = min(4, total_rows-iter)
+    for iter in range(0, total_rows, 2):
+        current_rows = min(2, total_rows-iter)
         fig, axes = plt.subplots(nrows=current_rows, ncols=1, sharex=True)
 
         for index in range(current_rows):
@@ -87,6 +111,8 @@ def plotPriceHistory(pieClass, pieData):
                              stock['SMA_50'], label='SMA (50 days)', linestyle='--')
             axes[index].plot(stock['EMA_50'].index,
                              stock['EMA_50'], label='EMA (50 days)', linestyle='--')
+            axes[index].plot(stock['WMA'].index,
+                             stock['WMA'], label='WMA (14 days)', linestyle='--')
 
             axes[index].set_ylabel('Price/Indicator')
             axes[index].legend()
@@ -101,7 +127,6 @@ def plotPriceHistory(pieClass, pieData):
                 axes_price_rsi = [axes_price_rsi]
 
             stock = pieData[index + iter]
-
             # Plot Close Price
             axes_price_rsi[index].plot(
                 stock.index, stock['Close'], label='Close Price')
@@ -130,18 +155,53 @@ def plotPriceHistory(pieClass, pieData):
             nrows=current_rows, ncols=1, sharex=True)
         for index in range(current_rows):
             # Check if axes is not an array for pies with a only one remaining
-            if not isinstance(axes_price_rsi, np.ndarray):
-                axes_price_rsi = [axes_price_rsi]
+            if not isinstance(axes_price_atr, np.ndarray):
+                axes_price_atr = [axes_price_atr]
 
             stock = pieData[index + iter]
             axes_price_atr[index].plot(
                 stock.index, stock['ATR'], label='ATR (14 days)')
-            axes_rsi.set_xlabel('Date')
-            axes_rsi.set_ylabel('ATR')
-            axes_price_atr[index].grid()
             axes_price_atr[index].legend()
+            axes_price_atr[index].grid()
         plt.suptitle(f"ATR for Stocks/ETFs")
         plt.xlabel("Date")
+        plt.xlabel("ATR")
+        plt.tight_layout()
+        plt.show()
+
+        fig, axes_price_oscillator = plt.subplots(
+            nrows=current_rows, ncols=1, sharex=True)
+        for index in range(current_rows):
+            # Check if axes is not an array for pies with a only one remaining
+            if not isinstance(axes_price_oscillator, np.ndarray):
+                axes_price_oscillator = [axes_price_oscillator]
+
+            stock = pieData[index + iter]
+            axes_price_oscillator[index].plot(
+                stock.index, stock['Stochastic Oscillator'], label='Stochastic Oscillator (14 days)')
+            axes_price_oscillator[index].legend()
+            axes_price_oscillator[index].grid()
+        plt.suptitle(f"Stochastic Oscillator for Stocks/ETFs")
+        plt.xlabel("Date")
+        plt.ylabel("Stochastic Oscillator")
+        plt.tight_layout()
+        plt.show()
+
+        fig, axes_price_macd = plt.subplots(
+            nrows=current_rows, ncols=1, sharex=True)
+        for index in range(current_rows):
+            # Check if axes is not an array for pies with a only one remaining
+            if not isinstance(axes_price_macd, np.ndarray):
+                axes_price_macd = [axes_price_macd]
+
+            stock = pieData[index + iter]
+            axes_price_macd[index].plot(
+                stock.index, stock['MACD'], label='MACD (12-26 days)')
+            axes_price_macd[index].grid()
+            axes_price_macd[index].legend()
+        plt.suptitle(f"Moving Average Convergence Divergence for Stocks/ETFs")
+        plt.xlabel("Date")
+        plt.ylabel("MACD")
         plt.tight_layout()
         plt.show()
 
