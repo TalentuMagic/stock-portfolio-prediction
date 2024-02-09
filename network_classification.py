@@ -363,6 +363,7 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
 
             if index != len(files):
                 time.sleep(1)
+
         except Exception as e:
             print("An error occured:", e, '\nRetrying...\n')
             continue

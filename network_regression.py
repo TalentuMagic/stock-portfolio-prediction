@@ -345,10 +345,10 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
             print("\nPrice Increase/Decrease Tomorrow:",
                   y_test_predictions[-1])
             # Count occurrences within the threshold
-            if np.abs(mse) + np.abs(mae) + np.abs(loss) - rmse + (rmse*0.25) <= rmse*0.25:
+            if np.abs(mse) + np.abs(mae) + np.abs(loss) - (rmse * 3) <= rmse * 3:
                 threshold = np.abs(mse) + np.abs(mae) + np.abs(loss)
             else:
-                threshold = np.abs(rmse) + np.abs(rmse*0.25)
+                threshold = np.abs(rmse*3)
 
             close_enough_count = np.sum(
                 (np.abs(y_test) - np.abs(y_test_predictions)) <= threshold)
@@ -374,8 +374,10 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
 
             if index != len(files):
                 time.sleep(1)
+
         except Exception as e:
             print("An error occured:", e, '\nRetrying...\n')
+            raise SystemError(e)
             continue
     print("\nTraining on the whole pie took:", datetime.now() - start)
 

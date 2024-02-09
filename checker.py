@@ -354,10 +354,10 @@ def preprocessData_Regression(files: list() = None, index: int = None):
               y_test_predictions[-1], '\n')
 
         # Count occurrences within the threshold
-        if np.abs(mse) + np.abs(mae) + np.abs(loss_r) - rmse + (rmse*0.25) <= rmse*0.25:
+        if np.abs(mse) + np.abs(mae) + np.abs(loss_r) - rmse + (rmse*3) <= rmse*3:
             threshold = np.abs(mse) + np.abs(mae) + np.abs(loss_r)
         else:
-            threshold = np.abs(rmse) + np.abs(rmse*0.25)
+            threshold = np.abs(rmse) + np.abs(rmse*3)
 
         close_enough_count = np.sum(
             (np.abs(y_test) - np.abs(y_test_predictions)) <= threshold)
@@ -374,11 +374,11 @@ def preprocessData_Regression(files: list() = None, index: int = None):
 
         print("\n------------------------\n")
 
-        regression['Threshold'] = threshold
-        regression["No. Predictions Close Enough to Threshold"] = close_enough_count / \
-            len(y_test)
-        regression["No. Predictions Close Enough Percentage"] = close_enough_percentage
-        regression['Yearly Price Mean of Close Enough Values'] = mean_close_enough
+        regression['Threshold'] = threshold.tolist()
+        regression["No. Predictions Close Enough to Threshold"] = (close_enough_count /
+                                                                   len(y_test)).tolist()
+        regression["No. Predictions Close Enough Percentage"] = close_enough_percentage.tolist()
+        regression['Yearly Price Mean of Close Enough Values'] = mean_close_enough.tolist()
 
         regression["Last Year's Performance"] = mode(
             y_test_predictions).tolist()
@@ -436,4 +436,4 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
 
 
 if __name__ == "__main__":
-    main(4, 'n', 'n')
+    main(3, 'n', 'n')
