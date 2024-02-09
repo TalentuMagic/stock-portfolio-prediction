@@ -287,9 +287,9 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
 
             checkpoint = ModelCheckpoint(
                 checkpoint_path,
-                monitor='val_loss',  # You can use other metrics like 'val_loss'
+                monitor='val_accuracy',  # You can use other metrics like 'val_loss'
                 save_best_only=True,
-                mode='min',  # 'max' for accuracy, 'min' for loss, 'auto' for automatic
+                mode='max',  # 'max' for accuracy, 'min' for loss, 'auto' for automatic
                 verbose=1
             )
             early_stopping = EarlyStopping(
@@ -309,7 +309,7 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
                             kernel_regularizer=regularizers.l2(0.01)))
             optimizer = Adam(learning_rate=0.00025)
             model.compile(optimizer=optimizer,
-                          loss='binary_crossentropy', metrics=['accuracy'])
+                          loss='binary_focal_crossentropy', metrics=['accuracy'])
 
             model.summary()
             history = model.fit(X_train, y_train, epochs=100, batch_size=64,
@@ -324,6 +324,8 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
             print("Validation Accuracy:", accuracy)
 
             time.sleep(1)
+            # y_test_predictions = np.array(
+            #     model.predict(X_test).astype('float32')).squeeze()
             y_test_predictions_scaled = np.array(model.predict(
                 X_test).astype('float32')).reshape(-1, 1)
 
@@ -338,8 +340,10 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
             y_test_predictions_binary = [
                 1 if prediction > 0.5 else 0 for prediction in y_test_predictions]
 
-            print("\nMost Occurring Prediction:",
+            print("\nLast Year's Performance:",
                   mode(y_test_predictions_binary))
+            print("Price Increase/Decrease Tomorrow:",
+                  y_test_predictions_binary[-1], '\n')
 
             # Create confusion matrix
             cm = confusion_matrix(y_test, y_test_predictions_binary)
