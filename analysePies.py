@@ -9,7 +9,7 @@ def dataSetup(pieData: list = None):
         stock_data['RSI'] = computeRSI(stock_data=stock_data)
         stock_data['ATR'] = computeATR(stock_data=stock_data)
         stock_data['WMA'] = computeWMA(stock_data['Adj Close'], 14)
-        stock_data['MACD'], stock_data['Signal'] = computeMACD(
+        stock_data['MACD'] = computeMACD(
             stock_data['Adj Close'], 12, 26)
         stock_data['Stochastic Oscillator'] = computeStochasticOscillator(
             stock_data['Adj Close'], stock_data['High'], stock_data['Low'], 14)
@@ -80,8 +80,7 @@ def computeMACD(data, short_period, long_period):
     short_EMA = data.ewm(span=short_period, adjust=False).mean()
     long_EMA = data.ewm(span=long_period, adjust=False).mean()
     MACD_line = short_EMA - long_EMA
-    signal_line = MACD_line.ewm(span=9, adjust=False).mean()
-    return MACD_line, signal_line
+    return MACD_line
 
 
 def computeStochasticOscillator(data, high, low, period):
@@ -163,7 +162,7 @@ def plotPriceHistory(pieClass, pieData):
                 stock.index, stock['ATR'], label='ATR (14 days)')
             axes_price_atr[index].legend()
             axes_price_atr[index].grid()
-        plt.suptitle(f"ATR for Stocks/ETFs")
+        plt.suptitle(f"Average True Range for Stocks/ETFs")
         plt.xlabel("Date")
         plt.xlabel("ATR")
         plt.tight_layout()
