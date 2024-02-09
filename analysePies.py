@@ -20,8 +20,10 @@ def dataSetup(pieData: list = None):
         stock_data['LowerBand'] = stock_data['SMA_20'] - \
             2 * stock_data['Adj Close'].rolling(window=20).std()
         stock_data['Tomorrow'] = stock_data['Adj Close'].shift(-1)
-        stock_data['Target'] = np.log(stock_data['Adj Close'].shift(
-            -1)) - np.log(stock_data['Adj Close'])
+        stock_data['ROI'] = (stock_data['Adj Close'].shift(
+            -1) - stock_data['Adj Close']) / stock_data['Adj Close']
+        stock_data['Target'] = stock_data['Adj Close'].shift(
+            -1) - stock_data['Adj Close']
         stock_data['TargetClass'] = (
             stock_data['Tomorrow'] > stock_data['Adj Close']).astype(int)
 
