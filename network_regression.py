@@ -345,7 +345,10 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
             print("\nPrice Increase/Decrease Tomorrow:",
                   y_test_predictions[-1])
             # Count occurrences within the threshold
-            threshold = (np.abs(mse) + np.abs(mae) + np.abs(loss)) * 5
+            if np.abs(mse) + np.abs(mae) + np.abs(loss) - rmse + (rmse*0.25) <= rmse*0.25:
+                threshold = np.abs(mse) + np.abs(mae) + np.abs(loss)
+            else:
+                threshold = np.abs(rmse) + np.abs(rmse*0.25)
 
             close_enough_count = np.sum(
                 (np.abs(y_test) - np.abs(y_test_predictions)) <= threshold)
