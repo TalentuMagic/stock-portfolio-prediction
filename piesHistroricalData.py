@@ -35,7 +35,7 @@ class ETFs:
 class EurozoneInvestments:
     def __init__(self):
         self.holdings = ['AAPL', 'MSFT', 'GOOGL',
-                         'NVDA', 'META', 'MA', 'ADBE', 'NFLX', 'AMD', 'V', 'QCOM', 'INGA.AS', 'INTC', 'RMS.PA', 'OMV.DE', 'MBG.DE', 'BMW.DE', 'DBK.DE', 'AIR.PA', 'OR.PA', 'BA', 'F', 'ADS.DE', 'VOD.L', 'ORA.PA', 'DTE.DE', 'GLE.PA', 'PUM.DE', 'NKE', 'BAYN.DE', 'PM', 'BATS.L']
+                         'NVDA', 'META', 'MA', 'ADBE', 'NFLX', 'AMD', 'V', 'QCOM', 'INGA.AS', 'INTC', 'RMS.PA', 'OMV.DE', 'MBG.DE', 'BMW.DE', 'DBK.DE', 'AIR.PA', 'OR.PA', 'BA', 'F', 'ADS.DE', 'VOD.L', 'ORA.PA', 'DTE.DE', 'GLE.PA', 'PUM.DE', 'NKE', 'BAYN.DE', 'PM', 'BTI']
         print(
             f"<INFO> Fetching pie holdings historical data for {self.holdings}")
         self.pieData = getPieData(holdings=self.holdings)
