@@ -9,8 +9,6 @@ def dataSetup(pieData: list = None):
         stock_data['RSI'] = computeRSI(stock_data=stock_data)
         stock_data['ATR'] = computeATR(stock_data=stock_data)
         stock_data['WMA'] = computeWMA(stock_data['Adj Close'], 14)
-        stock_data['MACD'], stock_data['MACD_Signal'] = computeMACD(
-            stock_data['Adj Close'], 12, 26)
         plus_di, minus_di, adx_smooth = computeDMI_ADX(
             stock_data['High'], stock_data['Low'], stock_data['Close'], 14)
         stock_data['PlusDI'] = plus_di
@@ -76,14 +74,6 @@ def computeATR(stock_data: pd.DataFrame, period: int = 14):
 def computeWMA(data, period):
     weights = np.arange(period, 0, -1)
     return data.rolling(period).apply(lambda x: np.dot(x, weights)/weights.sum(), raw=True)
-
-
-def computeMACD(data, short_period, long_period):
-    short_EMA = data.ewm(span=short_period, adjust=False).mean()
-    long_EMA = data.ewm(span=long_period, adjust=False).mean()
-    MACD_line = short_EMA - long_EMA
-    signal_line = MACD_line.ewm(span=9, adjust=False).mean()
-    return MACD_line, signal_line
 
 
 def computeDMI_ADX(high, low, close, lookback):
@@ -187,23 +177,25 @@ def plotPriceHistory(pieClass, pieData):
         plt.tight_layout()
         plt.show()
 
-        fig, axes_price_macd = plt.subplots(
+        fig, axes_price_adx = plt.subplots(
             nrows=current_rows, ncols=1, sharex=True)
         for index in range(current_rows):
             # Check if axes is not an array for pies with a only one remaining
-            if not isinstance(axes_price_macd, np.ndarray):
-                axes_price_macd = [axes_price_macd]
+            if not isinstance(axes_price_adx, np.ndarray):
+                axes_price_adx = [axes_price_adx]
 
             stock = pieData[index + iter]
-            axes_price_macd[index].plot(
-                stock.index, stock['MACD'], label='MACD (12-26 period EMA)')
-            axes_price_macd[index].plot(
-                stock.index, stock['MACD_Signal'], label='MACD Signal (12-26 period EMA)')
-            axes_price_macd[index].grid()
-            axes_price_macd[index].legend()
-        plt.suptitle(f"Moving Average Convergence Divergence for Stocks/ETFs")
+            axes_price_adx[index].plot(
+                stock.index, stock['ADX'], label='ADX (14 days)')
+            axes_price_adx[index].plot(
+                stock.index, stock['PlusDI'], label='+DI (14 days)', color='green')
+            axes_price_adx[index].plot(
+                stock.index, stock['MinusDI'], label='-DI (14 days)', color='red')
+            axes_price_adx[index].grid()
+            axes_price_adx[index].legend()
+        plt.suptitle(f"Average Directional Index for Stocks/ETFs")
         plt.xlabel("Date")
-        plt.ylabel("MACD")
+        plt.ylabel("ADX")
         plt.tight_layout()
         plt.show()
 
