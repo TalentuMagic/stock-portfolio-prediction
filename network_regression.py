@@ -7,7 +7,7 @@ import seaborn
 from statistics import mode
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import train_test_split
-from keras.models import Sequential
+from keras.models import Sequential, load_model
 from keras.layers import Dense, LSTM, Dropout, BatchNormalization
 from keras.optimizers import Adam
 from keras.callbacks import ModelCheckpoint, EarlyStopping
@@ -317,6 +317,14 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
             model.summary()
             history = model.fit(X_train, y_train, epochs=100, batch_size=64,
                                 validation_data=(X_val, y_val), callbacks=[checkpoint, early_stopping], verbose=1)
+
+            # load the best performing model
+            if len(filename) > 1:
+                model = load_model(
+                    fr"./models/regression/{filename[0]}_{filename[1]}.h5")
+            else:
+                model = load_model(
+                    fr"./models/regression/{filename[0]}.h5")
 
             loss, mae, mse, rmse = model.evaluate(X_test, y_test)
 
