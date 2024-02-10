@@ -9,15 +9,17 @@ def dataSetup(pieData: list = None):
         stock_data['RSI'] = computeRSI(stock_data=stock_data)
         stock_data['ATR'] = computeATR(stock_data=stock_data)
         stock_data['WMA'] = computeWMA(stock_data['Adj Close'], 14)
-        stock_data['MACD'] = computeMACD(
+        stock_data['MACD'], stock_data['MACD_Signal'] = computeMACD(
             stock_data['Adj Close'], 12, 26)
-        stock_data['Stochastic Oscillator'] = computeStochasticOscillator(
-            stock_data['Adj Close'], stock_data['High'], stock_data['Low'], 14)
+        plus_di, minus_di, adx_smooth = computeDMI_ADX(
+            stock_data['High'], stock_data['Low'], stock_data['Close'], 14)
+        stock_data['PlusDI'] = plus_di
+        stock_data['MinusDI'] = minus_di
+        stock_data['ADX'] = adx_smooth
         stock_data['SMA_50'] = stock_data['Adj Close'].rolling(
             window=50).mean()
         stock_data['EMA_50'] = stock_data['Adj Close'].ewm(
             span=50, adjust=False).mean()
-
         stock_data['SMA_20'] = stock_data['Adj Close'].rolling(
             window=20).mean()
         stock_data['UpperBand'] = stock_data['SMA_20'] + \
@@ -25,8 +27,8 @@ def dataSetup(pieData: list = None):
         stock_data['LowerBand'] = stock_data['SMA_20'] - \
             2 * stock_data['Adj Close'].rolling(window=20).std()
         stock_data['Tomorrow'] = stock_data['Adj Close'].shift(-1)
-        stock_data['ROI'] = (stock_data['Adj Close'].shift(
-            -1) - stock_data['Adj Close']) / stock_data['Adj Close']
+        stock_data['ROI'] = ((stock_data['Adj Close'].shift(
+            -1) - stock_data['Adj Close']) / stock_data['Adj Close'])*100
         stock_data['Target'] = stock_data['Adj Close'].shift(
             -1) - stock_data['Adj Close']
         stock_data['TargetClass'] = (
@@ -80,13 +82,30 @@ def computeMACD(data, short_period, long_period):
     short_EMA = data.ewm(span=short_period, adjust=False).mean()
     long_EMA = data.ewm(span=long_period, adjust=False).mean()
     MACD_line = short_EMA - long_EMA
-    return MACD_line
+    signal_line = MACD_line.ewm(span=9, adjust=False).mean()
+    return MACD_line, signal_line
 
 
-def computeStochasticOscillator(data, high, low, period):
-    highest_high = high.rolling(period).max()
-    lowest_low = low.rolling(period).min()
-    return 100 * (data - lowest_low) / (highest_high - lowest_low)
+def computeDMI_ADX(high, low, close, lookback):
+    plus_dm = high.diff()
+    minus_dm = low.diff()
+    plus_dm[plus_dm < 0] = 0
+    minus_dm[minus_dm > 0] = 0
+
+    tr1 = pd.DataFrame(high - low)
+    tr2 = pd.DataFrame(abs(high - close.shift(1)))
+    tr3 = pd.DataFrame(abs(low - close.shift(1)))
+    frames = [tr1, tr2, tr3]
+    tr = pd.concat(frames, axis=1, join='inner').max(axis=1)
+    atr = tr.rolling(lookback).mean()
+
+    plus_di = 100 * (plus_dm.ewm(alpha=1/lookback).mean() / atr)
+    minus_di = abs(100 * (minus_dm.ewm(alpha=1/lookback).mean() / atr))
+    dx = (abs(plus_di - minus_di) / abs(plus_di + minus_di)) * 100
+    adx = ((dx.shift(1) * (lookback - 1)) + dx) / lookback
+    adx_smooth = adx.ewm(alpha=1/lookback).mean()
+
+    return plus_di, minus_di, adx_smooth
 
 
 def plotPriceHistory(pieClass, pieData):
@@ -168,24 +187,6 @@ def plotPriceHistory(pieClass, pieData):
         plt.tight_layout()
         plt.show()
 
-        fig, axes_price_oscillator = plt.subplots(
-            nrows=current_rows, ncols=1, sharex=True)
-        for index in range(current_rows):
-            # Check if axes is not an array for pies with a only one remaining
-            if not isinstance(axes_price_oscillator, np.ndarray):
-                axes_price_oscillator = [axes_price_oscillator]
-
-            stock = pieData[index + iter]
-            axes_price_oscillator[index].plot(
-                stock.index, stock['Stochastic Oscillator'], label='Stochastic Oscillator (14 days)')
-            axes_price_oscillator[index].legend()
-            axes_price_oscillator[index].grid()
-        plt.suptitle(f"Stochastic Oscillator for Stocks/ETFs")
-        plt.xlabel("Date")
-        plt.ylabel("Stochastic Oscillator")
-        plt.tight_layout()
-        plt.show()
-
         fig, axes_price_macd = plt.subplots(
             nrows=current_rows, ncols=1, sharex=True)
         for index in range(current_rows):
@@ -195,7 +196,9 @@ def plotPriceHistory(pieClass, pieData):
 
             stock = pieData[index + iter]
             axes_price_macd[index].plot(
-                stock.index, stock['MACD'], label='MACD (12-26 days)')
+                stock.index, stock['MACD'], label='MACD (12-26 period EMA)')
+            axes_price_macd[index].plot(
+                stock.index, stock['MACD_Signal'], label='MACD Signal (12-26 period EMA)')
             axes_price_macd[index].grid()
             axes_price_macd[index].legend()
         plt.suptitle(f"Moving Average Convergence Divergence for Stocks/ETFs")
