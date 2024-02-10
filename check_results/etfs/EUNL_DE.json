@@ -1,23 +1,27 @@
 {
     "Classification": {
-        "Validation Loss": 0.14696674048900604,
-        "Validation Accuracy": 0.8046875,
+        "Validation Loss": 0.0951380655169487,
+        "Validation Accuracy": 0.98046875,
         "Confusion Matrix": {
-            "True Negatives": 70,
+            "True Negatives": 115,
             "False Negatives": 0,
             "True Positives": 136,
-            "False Positives": 50
+            "False Positives": 5
         },
         "Last Year's Performance": 1,
         "Price Increase/Decrease Tomorrow": 1
     },
     "Regression": {
-        "Validation Loss": 0.03393420949578285,
-        "Validation Mean Squared Error (MSE)": 7.213711796794087e-05,
-        "Validation Mean Absolute Error (MAE)": 0.006711979862302542,
-        "Validation Root Mean Sqared Error (RMSE)": 0.008493357338011265,
-        "Last Year's Performance": -0.5849717855453491,
-        "Price Tomorrow": 0.7050732374191284
+        "Validation Loss": 0.035037919878959656,
+        "Validation Mean Squared Error (MSE)": 8.446389256278053e-05,
+        "Validation Mean Absolute Error (MAE)": 0.008159240707755089,
+        "Validation Root Mean Sqared Error (RMSE)": 0.009190423414111137,
+        "Threshold": 0.055142540484666824,
+        "No. Predictions Close Enough to Threshold": 256,
+        "No. Predictions Close Enough Percentage": 100.0,
+        "Yearly Price Mean of Close Enough Values": 0.14543388783931732,
+        "Last Year's Performance": -0.7268917560577393,
+        "Price Tomorrow": 0.48918968439102173
     },
     "Both Models Agree on Last Year": false,
     "Both Models Agree on Price Tomorrow": true

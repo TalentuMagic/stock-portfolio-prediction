@@ -375,8 +375,8 @@ def preprocessData_Regression(files: list() = None, index: int = None):
         print("\n------------------------\n")
 
         regression['Threshold'] = threshold.tolist()
-        regression["No. Predictions Close Enough to Threshold"] = (close_enough_count /
-                                                                   len(y_test)).tolist()
+        regression["No. Predictions Close Enough to Threshold"] = (
+            close_enough_count).tolist()
         regression["No. Predictions Close Enough Percentage"] = close_enough_percentage.tolist()
         regression['Yearly Price Mean of Close Enough Values'] = mean_close_enough.tolist()
 
