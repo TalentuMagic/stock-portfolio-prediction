@@ -385,8 +385,8 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
 
         except Exception as e:
             print("An error occured:", e, '\nRetrying...\n')
-            raise SystemError(e)
             continue
+            # raise SystemError(e)
     print("\nTraining on the whole pie took:", datetime.now() - start)
 
 

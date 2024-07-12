@@ -1,3 +1,4 @@
+import argparse
 import os
 from statistics import mode
 import numpy as np
@@ -11,6 +12,18 @@ import json
 from keras import models, mixed_precision
 
 mixed_precision.set_global_policy('mixed_float16')
+
+parser = argparse.ArgumentParser(
+    description="Build both Regression and Classification models for the parsed pie.")
+
+parser.add_argument('Pie', metavar='pie', type=int,
+                    help='Please select one of the available pies.')
+parser.add_argument('--PriceHistory', metavar='price_history', type=str, default='n',
+                    help="Choose 'y' if you want to see price history.")
+parser.add_argument('--ModelPerformance', metavar='model_performance', type=str,
+                    default='n', help="Choose 'y' if you want to see model(s) performance.")
+
+args = parser.parse_args()
 
 
 def read_datasets(user_choice: int = None, price_history: str = None, metrics: str = None):
@@ -436,4 +449,4 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
 
 
 if __name__ == "__main__":
-    main(3, 'n', 'n')
+    main(args.Pie, args.PriceHistory, args.ModelPerformance)

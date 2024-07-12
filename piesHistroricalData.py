@@ -47,3 +47,34 @@ class Crypto:
         print(
             f"<INFO> Fetching pie holdings historical data for {self.holdings}")
         self.pieData = getPieData(holdings=self.holdings)
+
+
+class Commodities:
+    def __init__(self):
+        self.holdings = [
+            'CL=F', 'BZ=F', 'NG=F',   # Energy
+            'GC=F', 'SI=F', 'HG=F', 'PL=F', 'PA=F',   # Metals
+            'ZC=F', 'ZW=F', 'ZS=F', 'KC=F', 'CC=F', 'SB=F', 'CT=F',   # Agricultural
+            'LE=F', 'HE=F',   # Livestock
+            'LBS=F', 'OJ=F'   # Other
+        ]
+        print(
+            f"<INFO> Fetching pie holdings historical data for {self.holdings}")
+        self.pieData = getPieData(holdings=self.holdings)
+
+
+class DollarIndex:
+    def __init__(self):
+        self.holdings = ['DX-Y.NYB']
+        print(
+            f"<INFO> Fetching pie holdings historical data for {self.holdings}")
+        self.pieData = getPieData(holdings=self.holdings)
+
+
+class StockIndices:
+    def __init__(self):
+        self.holdings = ['^FCHI', '^FTSE', '^GDAXI',
+                         '^DJI', '^HSI', '^IXIC', '^RUT', '^NYA']
+        print(
+            f"<INFO> Fetching pie holdings historical data for {self.holdings}")
+        self.pieData = getPieData(holdings=self.holdings)

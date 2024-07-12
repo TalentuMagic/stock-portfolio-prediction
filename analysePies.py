@@ -1,11 +1,34 @@
 import numpy as np
 import pandas as pd
-from piesHistroricalData import OwnTheWorldIn50, ETFs, EurozoneInvestments, Crypto
+from piesHistroricalData import OwnTheWorldIn50, ETFs, EurozoneInvestments, Crypto, Commodities, DollarIndex, StockIndices
 import matplotlib.pyplot as plt
 
 
 def dataSetup(pieData: list = None):
     for index, stock_data in enumerate(pieData):
+        # # adding the commodities indexes to the DataSet
+        # commodities = Commodities()
+        # commodities_holdings = commodities.holdings
+        # commodities_pieData = commodities.pieData
+        # for i, tinker in enumerate(commodities_holdings):
+        #     stock_data[tinker] = commodities_pieData[i]['Adj Close']
+        # # adding the Dollar Index to the DataSet
+        # dollarIndex = DollarIndex()
+        # dollarIndex_holdings = dollarIndex.holdings
+        # dollarIndex_pieData = dollarIndex.pieData
+        # for i, tinker in enumerate(dollarIndex_holdings):
+        #     stock_data[tinker] = dollarIndex_pieData[i]['Adj Close']
+
+        # # adding the Dollar Index to the DataSet
+        # stockIndices = StockIndices()
+        # stockIndices_holdings = stockIndices.holdings
+        # stockIndices_pieData = stockIndices.pieData
+        # for i, tinker in enumerate(stockIndices_holdings):
+        #     stock_data[tinker] = stockIndices_pieData[i]['Adj Close']
+
+        # stock_data.fillna(method='ffill', inplace=True)
+        # stock_data.fillna(method='bfill', inplace=True)
+
         stock_data['RSI'] = computeRSI(stock_data=stock_data)
         stock_data['ATR'] = computeATR(stock_data=stock_data)
         stock_data['WMA'] = computeWMA(stock_data['Adj Close'], 14)
@@ -14,6 +37,8 @@ def dataSetup(pieData: list = None):
         stock_data['PlusDI'] = plus_di
         stock_data['MinusDI'] = minus_di
         stock_data['ADX'] = adx_smooth
+        stock_data['ROC_20'] = stock_data['Adj Close'].pct_change(
+            periods=20) * 100
         stock_data['SMA_50'] = stock_data['Adj Close'].rolling(
             window=50).mean()
         stock_data['EMA_50'] = stock_data['Adj Close'].ewm(
@@ -255,6 +280,48 @@ def getPieData_OwnTheWorldIn50(ok: bool = None):
                 pieData_otw[index].to_csv(file)
     if ok:
         plotPriceHistory(otw, pieData_otw)
+
+
+def getPieData_Commodities(ok: bool = None):
+    """True if you want to see the price plots with the indicators\n
+    False if you don't want to plot the price history with indicators"""
+    if ok is not None and ok:
+        commodities = Commodities()
+
+        pieData_commodities = dataSetup(commodities.pieData)
+        for index, name in enumerate(commodities.holdings):
+            with open(f'./commodities/{name}.csv', 'w') as file:
+                pieData_commodities[index].to_csv(file)
+    if ok:
+        plotPriceHistory(commodities, pieData_commodities)
+
+
+def getPieData_DollarIndex(ok: bool = None):
+    """True if you want to see the price plots with the indicators\n
+    False if you don't want to plot the price history with indicators"""
+    if ok is not None and ok:
+        dollarIndex = DollarIndex()
+
+        pieData_dollarIndex = dataSetup(dollarIndex.pieData)
+        for index, name in enumerate(dollarIndex.holdings):
+            with open(f'./dollarIndex/{name}.csv', 'w') as file:
+                pieData_dollarIndex[index].to_csv(file)
+    if ok:
+        plotPriceHistory(dollarIndex, pieData_dollarIndex)
+
+
+def getPieData_StockIndices(ok: bool = None):
+    """True if you want to see the price plots with the indicators\n
+    False if you don't want to plot the price history with indicators"""
+    if ok is not None and ok:
+        stockIndices = StockIndices()
+
+        pieData_stockIndices = dataSetup(stockIndices.pieData)
+        for indices, name in enumerate(stockIndices.holdings):
+            with open(f'./stockIndices/{name}.csv', 'w') as file:
+                pieData_stockIndices[indices].to_csv(file)
+    if ok:
+        plotPriceHistory(stockIndices, pieData_stockIndices)
 
 
 def main():
