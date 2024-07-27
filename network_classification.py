@@ -65,7 +65,7 @@ def plotModelPerformance(model, X_test, y_test, history, y_test_predictions, los
     plt.show()
 
 
-def read_datasets(user_choice: int = None, price_history: str = None, metrics: str = None):
+def read_datasets(user_choice: int = None, price_history: str = None, metrics: str = None, ticker: str = None):
     if user_choice is None and price_history is None and metrics is None:
         while True:
             print(
@@ -223,10 +223,18 @@ def read_datasets(user_choice: int = None, price_history: str = None, metrics: s
     return files, ok
 
 
-def main(user_choice: int = None, price_history: str = None, metrics: str = None):
-    files, ok = read_datasets(user_choice, price_history, metrics)
+def main(user_choice: int = None, price_history: str = None, metrics: str = None, ticker: str = None):
+    files, ok = read_datasets(user_choice, price_history, metrics, ticker)
 
     index = 0
+    if ticker is not None:
+        try:
+            for i, stock in enumerate(files):
+                if ticker in stock.rstrip(".csv"):
+                    index = i
+        except:
+            print("[INFO] The specified ticker NOT FOUND!")
+
     while index < len(files):
         try:
             print(files[index])
@@ -367,7 +375,10 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
             del model
 
             print("Waiting 1 second(s) between trainings...\n")
-            index += 1
+            if ticker is not None:
+                break
+            else:
+                index += 1
 
             if index != len(files):
                 time.sleep(1)

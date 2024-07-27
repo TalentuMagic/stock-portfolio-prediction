@@ -22,6 +22,8 @@ parser.add_argument('--PriceHistory', metavar='price_history', type=str, default
                     help="Choose 'y' if you want to see price history.")
 parser.add_argument('--ModelPerformance', metavar='model_performance', type=str,
                     default='n', help="Choose 'y' if you want to see model(s) performance.")
+parser.add_argument('--Ticker', metavar='ticker', type=str, default=None,
+                    help="Write the ticker of the stock you want to analyse.")
 
 args = parser.parse_args()
 
@@ -404,10 +406,17 @@ def preprocessData_Regression(files: list() = None, index: int = None):
     return regression
 
 
-def main(user_choice: int = None, price_history: str = None, metrics: str = None):
+def main(user_choice: int = None, price_history: str = None, metrics: str = None, ticker: str = None):
     results = dict()
     files, ok = read_datasets(user_choice, price_history, metrics)
     index = 0
+    if ticker is not None:
+        try:
+            for i, stock in enumerate(files):
+                if ticker in stock.rstrip(".csv"):
+                    index = i
+        except:
+            print("[INFO] The specified ticker NOT FOUND!")
     while index < len(files):
         classification = preprocessData_Classification(files, index)
         regression = preprocessData_Regression(files, index)
@@ -445,8 +454,11 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
             with open(f'./check_results/{filename[0]}.json', 'w') as file:
                 json.dump(results, file)
 
-        index += 1
+        if ticker is not None:
+            break
+        else:
+            index += 1
 
 
 if __name__ == "__main__":
-    main(args.Pie, args.PriceHistory, args.ModelPerformance)
+    main(args.Pie, args.PriceHistory, args.ModelPerformance, args.Ticker)
