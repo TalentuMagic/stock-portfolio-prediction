@@ -26,7 +26,7 @@ class OwnTheWorldIn50:
 class ETFs:
     def __init__(self):
         self.holdings = ['QDVE.DE', 'SXRV.DE',
-                         'SXR8.DE', 'EUNL.DE', 'VWCE.DE', '2B76.DE', 'XDWH.DE', 'XDWT.DE']
+                         'SXR8.DE', 'EUNL.DE', 'VWCE.DE', '2B76.DE', 'XDWH.DE', 'XDWT.DE', 'XAIX.DE']
         print(
             f"<INFO> Fetching pie holdings historical data for {self.holdings}")
         self.pieData = getPieData(holdings=self.holdings)
