@@ -166,12 +166,12 @@ def plotPriceHistory(pieClass, pieData):
 
             # Plot RSI with Overbought and Oversold levels
             axes_rsi = axes_price_rsi[index].twinx()
-            axes_rsi.plot(
-                stock.index, stock['RSI'], label='RSI', color='orange')
-            axes_rsi.axhline(y=70, color='red', linestyle='--',
+            axes_rsi.axhline(y=70, color='red', linestyle='-.',
                              label='Overbought (70)')
             axes_rsi.axhline(y=30, color='green',
-                             linestyle='--', label='Oversold (30)')
+                             linestyle='-.', label='Oversold (30)')
+            axes_rsi.plot(
+                stock.index, stock['RSI'], label=f'RSI {pieClass.holdings[index+iter]}', color='orange')
 
             axes_price_rsi[index].set_ylabel('Price')
             axes_rsi.set_ylabel('RSI')
@@ -193,7 +193,7 @@ def plotPriceHistory(pieClass, pieData):
 
             stock = pieData[index + iter]
             axes_price_atr[index].plot(
-                stock.index, stock['ATR'], label='ATR (14 days)')
+                stock.index, stock['ATR'], label=f'ATR (14 days) {pieClass.holdings[index+iter]}')
             axes_price_atr[index].legend()
             axes_price_atr[index].grid()
         plt.suptitle(f"Average True Range for Stocks/ETFs")
@@ -203,24 +203,29 @@ def plotPriceHistory(pieClass, pieData):
         plt.show()
 
         fig, axes_price_adx = plt.subplots(
-            nrows=current_rows, ncols=1, sharex=True)
+            nrows=current_rows*2, ncols=1, sharex=True)
         for index in range(current_rows):
             # Check if axes is not an array for pies with a only one remaining
             if not isinstance(axes_price_adx, np.ndarray):
                 axes_price_adx = [axes_price_adx]
 
             stock = pieData[index + iter]
-            axes_price_adx[index].plot(
-                stock.index, stock['ADX'], label='ADX (14 days)')
-            axes_price_adx[index].plot(
-                stock.index, stock['PlusDI'], label='+DI (14 days)', color='green')
-            axes_price_adx[index].plot(
-                stock.index, stock['MinusDI'], label='-DI (14 days)', color='red')
-            axes_price_adx[index].grid()
-            axes_price_adx[index].legend()
+            axes_price_adx[index*2].plot(
+                stock.index, stock['MinusDI'], label='-DI (14 days)', color='red', linestyle=':')
+            axes_price_adx[index*2].plot(
+                stock.index, stock['PlusDI'], label='+DI (14 days)', color='green', linestyle='--')
+            axes_price_adx[index*2].grid()
+            axes_price_adx[index*2].legend()
+            axes_price_adx[index*2].set_ylabel('-DI / +DI')
+            axes_price_adx[index*2].set_title(pieClass.holdings[index+iter])
+
+            axes_price_adx[index*2+1].plot(
+                stock.index, stock['ADX'], label='ADX')
+            axes_price_adx[index*2+1].grid()
+            axes_price_adx[index*2+1].legend()
+            axes_price_adx[index*2+1].set_ylabel('ADX (14 days)')
         plt.suptitle(f"Average Directional Index for Stocks/ETFs")
         plt.xlabel("Date")
-        plt.ylabel("ADX")
         plt.tight_layout()
         plt.show()
 
