@@ -114,6 +114,9 @@ def computeDMI_ADX(high, low, close, lookback):
     tr = pd.concat(frames, axis=1, join='inner').max(axis=1)
     atr = tr.rolling(lookback).mean()
 
+    # Handle zero ATR values
+    atr[atr == 0] = np.nan
+
     plus_di = 100 * (plus_dm.ewm(alpha=1/lookback).mean() / atr)
     minus_di = abs(100 * (minus_dm.ewm(alpha=1/lookback).mean() / atr))
     dx = (abs(plus_di - minus_di) / abs(plus_di + minus_di)) * 100
