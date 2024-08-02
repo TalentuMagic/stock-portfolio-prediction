@@ -6,6 +6,8 @@ def getPieData(holdings: list = None):
     for stock in holdings:
         try:
             response = yf.download(stock)
+            if response.empty:
+                continue
             stock_data.append(response)
         except Exception as e:
             print(f"<ERROR> Failed fetching data for {stock}. {e}")

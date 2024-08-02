@@ -254,7 +254,7 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
             except:
                 print("[INFO] The dataset is empty! Skipping...")
                 index += 1
-                break
+                continue
 
             X = df.iloc[:, :-1].astype('float16')
             y = df.iloc[:, -1].astype('float16')
