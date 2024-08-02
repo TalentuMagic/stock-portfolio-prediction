@@ -247,8 +247,14 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
             df_columns, df_indexes = df.columns, df.index
 
             # Scale the data and pass it as the same DataFrame as before scaling
-            df = pd.DataFrame(scaler.fit_transform(
-                df), columns=df_columns, index=df_indexes)
+            # Handle empty dataset exception
+            try:
+                df = pd.DataFrame(scaler.fit_transform(
+                    df), columns=df_columns, index=df_indexes)
+            except:
+                print("[INFO] The dataset is empty! Skipping...")
+                index += 1
+                break
 
             X = df.iloc[:, :-1].astype('float16')
             y = df.iloc[:, -1].astype('float16')
@@ -374,12 +380,11 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
 
             del model
 
-            print("Waiting 1 second(s) between trainings...\n")
             if ticker is not None:
                 break
-            else:
-                index += 1
+            index += 1
 
+            print("Waiting 1 second(s) between trainings...\n")
             if index != len(files):
                 time.sleep(1)
 
