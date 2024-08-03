@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 
 
 def dataSetup(pieData: list = None):
+    if pieData is None or pieData is []:
+        return None
     for index, stock_data in enumerate(pieData):
         # # adding the commodities indexes to the DataSet
         # commodities = Commodities()
