@@ -27,8 +27,9 @@ class OwnTheWorldIn50:
 
 class ETFs:
     def __init__(self):
-        self.holdings = ['QDVE.DE', 'SXRV.DE',
-                         'SXR8.DE', 'EUNL.DE', 'VWCE.DE', '2B76.DE', 'XDWH.DE', 'XDWT.DE', 'XAIX.DE']
+        # IMAE.AS not added due to API having low data -> switched with XSX6.DE
+        self.holdings = ['XSX6.DE', 'QDVE.DE', 'EUNL.DE',
+                         'IS3N.DE', '4GLD.DE', 'EUNA.DE', 'XHYA.DE']
         print(
             f"<INFO> Fetching pie holdings historical data for {self.holdings}")
         self.pieData = getPieData(holdings=self.holdings)
@@ -36,8 +37,9 @@ class ETFs:
 
 class EurozoneInvestments:
     def __init__(self):
+        # 'DOU.DE', commenting out Douglas due to the low history
         self.holdings = ['AAPL', 'MSFT', 'GOOGL',
-                         'NVDA', 'META', 'AMZN', 'AI.MC', 'AMD', 'INTC', 'V', 'MA', 'PAY.L', 'ADBE', 'NFLX', 'QCOM', 'STMPA.PA', 'IFX.DE', 'SIE.DE', 'SHL.DE', 'ENR.DE', 'ELUXBS.XD', 'ERICBS.XD', 'VAR1.DE', 'SU.PA', 'KNEBV.HE', 'GEBN.SW', 'SMSN.IL', 'PHIA.AS', 'HUSQBS.XD', 'ASML.AS', 'NOKIA.HE', 'HON', 'OMV.DE', 'ENI.MI', 'IPCOS.XD', 'SHELL.AS', 'ENEL.MI', 'ENGI.PA', 'VIE.PA', 'EOAN.DE', 'MBG.DE', 'DTG.DE', 'BMW.DE', 'VOW.DE', 'PAH3.DE', 'F', 'RNO.PA', 'VOLVBS.XD', 'TSLA', 'RACE.MI', 'AML.L', 'CON.DE', 'PIRC.MI', 'BRE.MI', 'AIR.PA', 'BA', 'WIZZ.L', 'AF.PA', 'LHA.DE', 'EZJ.L', 'SAF.PA', 'INGA.AS', 'DBK.DE', 'GLE.PA', 'UCG.MI', 'LSEG.L', 'BARC.L', 'GS', 'MS', 'JPM', 'C', 'UBSG.SW', 'G.MI', 'NN.AS', 'EDEN.PA', 'PLX.PA', 'SW.PA', 'SGO.PA', 'ZAL.DE', 'CA.PA', 'B4B.DE', 'CPR.MI', 'NESN.SW', 'BN.PA', 'PG', 'UNA.AS', 'MCD', 'KO', 'PEP', 'HEIA.AS', 'CARLBC.XD', 'PM', 'BATS.L', 'RMS.PA', 'CDI.PA', 'BRBY.L', 'MONC.MI', 'CPRI', 'MC.PA', 'BOSS.DE', 'OR.PA', 'DOU.DE', 'PNDORA.CO', 'HMBS.XD', 'EL.PA', 'AFX.DE', 'GSK.L', 'ROG.SW', 'NOVOBC.XD', 'NOVN.SW', 'SAN.PA', 'BAYN.DE', 'PFE', 'AZN', 'MCOVBS.XD', 'SAP.DE', 'ABBN.SW', 'UBER', 'ABNB', 'BKNG', 'CAP.PA', 'VOD.L', 'ORA.PA', 'DTE.DE', 'SCMN.SW', 'ADS.DE', 'PUM.DE', 'NKE']
+                         'NVDA', 'META', 'AMZN', 'AI.MC', 'AMD', 'INTC', 'V', 'MA', 'PAY.L', 'ADBE', 'NFLX', 'QCOM', 'STMPA.PA', 'IFX.DE', 'SIE.DE', 'SHL.DE', 'ENR.DE', 'ELUXBS.XD', 'ERICBS.XD', 'VAR1.DE', 'SU.PA', 'KNEBV.HE', 'GEBN.SW', 'SMSN.IL', 'PHIA.AS', 'HUSQBS.XD', 'ASML.AS', 'NOKIA.HE', 'HON', 'OMV.DE', 'ENI.MI', 'IPCOS.XD', 'SHELL.AS', 'ENEL.MI', 'ENGI.PA', 'VIE.PA', 'EOAN.DE', 'MBG.DE', 'DTG.DE', 'BMW.DE', 'VOW.DE', 'PAH3.DE', 'F', 'RNO.PA', 'VOLVBS.XD', 'TSLA', 'RACE.MI', 'AML.L', 'CON.DE', 'PIRC.MI', 'BRE.MI', 'AIR.PA', 'BA', 'WIZZ.L', 'AF.PA', 'LHA.DE', 'EZJ.L', 'SAF.PA', 'INGA.AS', 'DBK.DE', 'GLE.PA', 'UCG.MI', 'LSEG.L', 'BARC.L', 'GS', 'MS', 'JPM', 'C', 'UBSG.SW', 'G.MI', 'NN.AS', 'EDEN.PA', 'PLX.PA', 'SW.PA', 'SGO.PA', 'ZAL.DE', 'CA.PA', 'B4B.DE', 'CPR.MI', 'NESN.SW', 'BN.PA', 'PG', 'UNA.AS', 'MCD', 'KO', 'PEP', 'HEIA.AS', 'CARLBC.XD', 'PM', 'BATS.L', 'RMS.PA', 'CDI.PA', 'BRBY.L', 'MONC.MI', 'CPRI', 'MC.PA', 'BOSS.DE', 'OR.PA', 'PNDORA.CO', 'HMBS.XD', 'EL.PA', 'AFX.DE', 'GSK.L', 'ROG.SW', 'NOVOBC.XD', 'NOVN.SW', 'SAN.PA', 'BAYN.DE', 'PFE', 'AZN', 'MCOVBS.XD', 'SAP.DE', 'ABBN.SW', 'UBER', 'ABNB', 'BKNG', 'CAP.PA', 'VOD.L', 'ORA.PA', 'DTE.DE', 'SCMN.SW', 'ADS.DE', 'PUM.DE', 'NKE']
 
         print(
             f"<INFO> Fetching pie holdings historical data for {self.holdings}")
