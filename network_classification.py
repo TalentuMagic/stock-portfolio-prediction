@@ -243,7 +243,7 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
 
             # Load the dataset
             df = pd.read_csv(fr'./{files[index]}', index_col='Date')
-            df = df.drop(['Volume', 'Close'], axis=1)
+            df = df.drop(['Volume', 'Close', 'Repaired?'], axis=1)
             df_columns, df_indexes = df.columns, df.index
 
             # Scale the data and pass it as the same DataFrame as before scaling
@@ -313,7 +313,7 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
             model = Sequential()
             print(model.dtype_policy)
             # Input layer
-            model.add(LSTM(512, input_shape=(
+            model.add(LSTM(128, input_shape=(
                 1, X_train.shape[2]), return_sequences=True, kernel_regularizer='l1_l2'))
             model.add(BatchNormalization())
             model.add(Dropout(0.15))
@@ -321,7 +321,7 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
             # Output layer
             model.add(Dense(1, activation='sigmoid',
                             kernel_regularizer=regularizers.l2(0.01)))
-            optimizer = Adam(learning_rate=0.00025)
+            optimizer = Adam(learning_rate=0.00025, clipnorm=1.0)
             model.compile(optimizer=optimizer,
                           loss='binary_focal_crossentropy', metrics=['accuracy'])
 
