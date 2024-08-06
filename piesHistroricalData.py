@@ -5,7 +5,7 @@ def getPieData(holdings: list = None):
     stock_data = list()
     for stock in holdings:
         try:
-            response = yf.download(stock)
+            response = yf.download(stock, repair=True)
             if response.empty:
                 continue
             stock_data.append(response)
