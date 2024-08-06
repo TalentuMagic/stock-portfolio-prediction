@@ -313,7 +313,7 @@ def main(user_choice: int = None, price_history: str = None, metrics: str = None
             model = Sequential()
             print(model.dtype_policy)
             # Input layer
-            model.add(LSTM(128, input_shape=(
+            model.add(LSTM(512, input_shape=(
                 1, X_train.shape[2]), return_sequences=True, kernel_regularizer='l1_l2'))
             model.add(BatchNormalization())
             model.add(Dropout(0.15))
