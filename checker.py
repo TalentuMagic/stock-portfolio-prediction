@@ -191,7 +191,7 @@ def preprocessData_Classification(files: list() = None, index: int = None):
         print(files[index])
         # Load the dataset
         df = pd.read_csv(f'./{files[index]}', index_col='Date')
-        df = df.drop(['Volume', 'Close'], axis=1)
+        df = df.drop(['Volume', 'Close', 'Repaired?'], axis=1)
         df_columns, df_indexes = df.columns, df.index
 
         scaler = StandardScaler(with_mean=False, with_std=False)
@@ -294,7 +294,7 @@ def preprocessData_Regression(files: list() = None, index: int = None):
         print(files[index])
         # Load the dataset
         df = pd.read_csv(f'./{files[index]}', index_col='Date')
-        df = df.drop(['Volume', 'Close'], axis=1)
+        df = df.drop(['Volume', 'Close', 'Repaired?'], axis=1)
         df_columns, df_indexes = df.columns, df.index
 
         scaler = RobustScaler()
